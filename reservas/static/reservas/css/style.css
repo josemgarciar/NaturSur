@@ -1,0 +1,127 @@
+/* NaturSur — estilo base */
+:root{
+  /* Light theme (default) */
+  --bg: #f5faf7;
+  --surface: #ffffff;
+  --border: #e1eee8;
+  --muted: #5b6f66;
+  --text: #0f1f18;
+  --primary: #1aa36b;
+  --primary-700:#118455;
+  --ring: rgba(26,163,107,.22);
+  --header-start:#0f8c61;
+  --header-end:#1fb57a;
+  --ghost-hover-bg:#f2fbf7;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #0b0f0e;
+    --surface: #121716;
+    --border: #1c2321;
+    --muted: #9fb0a8;
+    --text: #f6fbf8;
+    --primary: #4cd2a0;
+    --primary-700:#2db181;
+    --ring: rgba(76,210,160,.35);
+    --header-start:#0a6c4e;
+    --header-end:#16885f;
+    --ghost-hover-bg:#141b19;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.container{width:min(1100px,92%);margin-inline:auto}
+
+/* Header */
+.ns-header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)}
+.ns-header.gradient{background:linear-gradient(90deg,var(--header-start), var(--header-end));}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.left{display:flex;align-items:center;gap:12px}
+.logo{color:#ffffff;font-weight:700;text-decoration:none;letter-spacing:.4px}
+.nav .nav-link{color:#e6fff5;margin-right:12px;text-decoration:none}
+.nav .nav-link:hover{color:#ffffff}
+.right{display:flex;align-items:center;gap:12px}
+.hamburger{display:inline-grid;gap:5px;background:transparent;border:0;cursor:pointer}
+.hamburger span{display:block;width:28px;height:2px;background:#ffffff;border-radius:2px}
+
+/* Hero */
+.hero{padding:48px 0 28px;border-bottom:1px solid var(--border)}
+.hero-cover{padding:0;border:none;background: center/cover no-repeat var(--bg);background-image:var(--hero-image);min-height:48vh;display:grid;align-items:center}
+.hero-inner{padding:56px 0}
+.hero h1{font-size:40px;line-height:1.1;margin:0 0 12px;color:#ffffff;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hero .lead{color:#f0fff7;max-width:60ch;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.pill{display:inline-block;background:#e9fbf3;border:1px solid #c8efe0;border-radius:999px;color:#136b49;font-size:12px;padding:4px 10px;margin-bottom:8px}
+.link{color:var(--primary);text-decoration:none}
+.link:hover{color:var(--text)}
+
+/* Buttons */
+.btn{display:inline-block;border-radius:10px;padding:10px 14px;font-weight:600;text-decoration:none;border:1px solid #1d2824}
+.btn-primary{background:linear-gradient(180deg, var(--primary), var(--primary-700));color:#eafff6;border-color:transparent;box-shadow:0 0 0 0 var(--ring)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-ghost{background:transparent;color:var(--text)}
+.btn-ghost:hover{background:var(--ghost-hover-bg)}
+.cta-row{display:flex;gap:12px;align-items:center;margin-top:14px}
+.btn-pill{border-radius:999px;padding:12px 18px;font-weight:700}
+.btn-light{background:#ffffff;color:#136b49;border-color:#e1eee8}
+.btn-light:hover{background:#f6fffb}
+
+/* Features */
+.features{padding:24px 0;border-bottom:1px solid var(--border);background:var(--surface)}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.feature h4{margin:0 0 6px}
+.feature p{margin:0;color:var(--muted)}
+
+/* Booking */
+.booking{padding:48px 0;background:var(--surface)}
+.booking h2{margin:0 0 8px}
+.booking .muted{color:var(--muted)}
+.form{margin-top:18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.form-field label{font-size:14px;color:var(--muted)}
+.form-field input, .form-field select, .form-field textarea{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);
+  padding:10px 12px;outline:none;transition: box-shadow .15s ease, border-color .15s ease
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  border-color:var(--primary-700);box-shadow:0 0 0 4px var(--ring)
+}
+.alert{background:#e6fff5;border:1px solid #b5f0d8;color:#0f6e4a;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+
+/* Success */
+.center{display:grid;place-items:center;min-height:50vh}
+.success-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;text-align:center}
+
+/* Shop */
+.shop{padding:48px 0;background:var(--surface)}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.product{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.product .thumb{height:120px;border-radius:8px;background:radial-gradient(120px 60px at 20% 20%, #bfe8d6, transparent), radial-gradient(120px 60px at 80% 80%, #d1f3e4, transparent);border:1px solid var(--border)}
+.small{font-size:12px}
+
+/* Footer */
+.ns-footer{border-top:1px solid var(--border);padding:18px 0;color:var(--muted);background:var(--surface)}
+
+/* Embedded shop */
+.shop-embed{padding:0;background:var(--surface)}
+.shop-iframe{display:block;width:100%;height:calc(100vh - 70px);border:0;background:var(--surface)}
+.embed-fallback{padding:24px 0;border-top:1px solid var(--border)}
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* Responsive */
+@media (max-width: 900px){
+  .hero-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .products{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 600px){
+  .grid-2{grid-template-columns:1fr}
+  .features-grid,.products{grid-template-columns:1fr}
+}

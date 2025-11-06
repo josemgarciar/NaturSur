@@ -1,0 +1,34 @@
+{% extends 'reservas/base.html' %}
+
+{% block content %}
+<section class="shop-embed">
+  <div class="container">
+    <h1 class="visually-hidden">Tienda</h1>
+  </div>
+  <iframe
+    class="shop-iframe"
+    src="{{ shop_url }}"
+    title="Tienda NaturSur"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+  <div id="embed-fallback" class="embed-fallback" hidden>
+    <div class="container">
+      <p class="muted">No se puede mostrar la tienda embebida debido a restricciones del sitio externo.</p>
+      <a class="btn btn-primary btn-pill" href="{{ shop_url }}" target="_blank" rel="noopener noreferrer">Abrir tienda en una pestaña nueva</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Si el sitio externo bloquea el iframe, el navegador no lo pintará.
+  // Mostramos un fallback si en unos segundos no se ha cargado nada.
+  (function(){
+    const iframe = document.querySelector('.shop-iframe');
+    const fallback = document.getElementById('embed-fallback');
+    let loaded = false;
+    iframe.addEventListener('load', () => { loaded = true; });
+    setTimeout(() => { if(!loaded) fallback.hidden = false; }, 2500);
+  })();
+</script>
+{% endblock %}

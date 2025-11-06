@@ -1,0 +1,16 @@
+{% extends 'reservas/base.html' %}
+
+{% block content %}
+<section class="success">
+  <div class="container center">
+    <div class="success-card">
+      <h1>¡Reserva confirmada!</h1>
+      <p>Te hemos enviado un correo con los detalles. Si necesitas cambiar algo, contáctanos.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/">Volver al inicio</a>
+        <a class="btn btn-ghost" href="{% url 'tienda' %}">Ir a la tienda</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

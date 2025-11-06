@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>NaturSur · Cuidado y Bienestar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'reservas/css/style.css' %}">
+</head>
+<body>
+  <header class="ns-header gradient">
+    <div class="container nav">
+      <div class="left">
+        <button class="hamburger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="/" class="logo">NaturSur</a>
+      </div>
+      <nav class="right">
+        <a class="nav-link" href="/">Inicio</a>
+        <a class="btn btn-pill btn-light" href="#reservas">Reservas</a>
+  <a class="btn btn-pill btn-light" href="{% url 'tienda' %}">Tienda</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="ns-footer">
+    <div class="container">
+      <p>© <span id="year"></span> NaturSur · Cuidado y Bienestar</p>
+      <small>Hecho con cariño en Andalucía</small>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
