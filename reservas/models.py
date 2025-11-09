@@ -3,10 +3,10 @@ from django.db import models
 
 class Reservation(models.Model):
     SERVICE_CHOICES = [
-        ("masaje", "Masaje relajante"),
-        ("yoga", "Sesión de Yoga"),
-        ("facial", "Tratamiento facial"),
-        ("spa", "Circuito Spa"),
+        ("masaje", "Masaje y Osteopatía"),
+        ("biomagnetico", "Par Biomagnético"),
+        ("emocionales", "Técnicas Emocionales"),
+        ("nutricional", "Asesoramiento Nutricional y Estilo de Vida"),
     ]
 
     name = models.CharField("Nombre", max_length=100)

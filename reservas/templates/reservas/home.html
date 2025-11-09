@@ -16,20 +16,20 @@
 <section class="features">
   <div class="container features-grid">
     <div class="feature">
-      <h4>Masajes</h4>
-      <p>Relaja cuerpo y mente con aceites esenciales del sur.</p>
+      <h4>Masaje y Osteopatía</h4>
+      <p>A través de técnicas de masaje y osteopatía, trabajamos para liberar restricciones, mejorar la postura y restaurar la armonía de tu organismo.</p>
     </div>
     <div class="feature">
-      <h4>Yoga</h4>
-      <p>Clases en grupos reducidos y enfoque mindful.</p>
+      <h4>Par Biomagnético</h4>
+      <p>El Par Biomagnético es una técnica que utiliza imanes para restaurar el balance natural del cuerpo, favoreciendo la capacidad de recuperación del organismo.</p>
     </div>
     <div class="feature">
-      <h4>Faciales</h4>
-      <p>Tratamientos botánicos para una piel luminosa.</p>
+      <h4>Técnicas Emocionales</h4>
+      <p>Muchas tensiones musculares, bloqueos o molestias físicas tienen un origen emocional. Utilizo diversas técnicas para ayudarte a liberar esas cargas y sentirte más ligero y equilibrado.</p>
     </div>
     <div class="feature">
-      <h4>Spa</h4>
-      <p>Recupera energía en nuestro circuito de aguas.</p>
+      <h4>Asesoramiento Nutricional y Estilo de Vida</h4>
+      <p>A través de un enfoque basado en la naturopatía, te ayudo a mejorar tu alimentación y a crear hábitos saludables que realmente funcionen para ti.</p>
     </div>
   </div>
 </section>
@@ -95,6 +95,67 @@
     </form>
   </div>
 </section>
+
+<section class="social">
+  <div class="container">
+    <h2>Últimas publicaciones</h2>
+    <p class="muted">Síguenos en redes para novedades, bienestar y estilo de vida.</p>
+
+    <div class="social-grid">
+      <!-- YouTube -->
+      <div class="social-col">
+        <div class="social-col-header">
+          <h3>▶️ Últimos Vídeos YouTube</h3>
+          <a class="link" href="{{ youtube_channel_url }}" target="_blank" rel="noopener">Ver canal</a>
+        </div>
+
+        {% if youtube_videos %}
+          <div class="cards">
+            {% for v in youtube_videos %}
+              <a class="card" href="{{ v.url }}" target="_blank" rel="noopener">
+                <div class="thumb" style="background-image:url('{{ v.image }}')"></div>
+                <div class="card-body">
+                  <div class="card-title">{{ v.title }}</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <p class="muted">No se pudieron cargar los vídeos ahora.</p>
+            <a class="btn btn-ghost" href="{{ youtube_channel_url }}" target="_blank" rel="noopener">Ir al canal</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Instagram -->
+      <div class="social-col">
+        <div class="social-col-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px">📸</span>
+            <h3 style="margin:0;font-size:22px;font-weight:700">Instagram</h3>
+          </div>
+          <a class="link" href="{{ instagram_profile_url }}" target="_blank" rel="noopener">@yosoyescalona</a>
+        </div>
+
+        <div class="instagram-embed-wrapper">
+          <iframe src="https://www.instagram.com/yosoyescalona/embed" width="100%" height="600" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+        </div>
+      </div>
+
+      <!-- Facebook Page Plugin -->
+      <div class="social-col">
+        <div class="social-col-header">
+          <h3>f Síguenos en Facebook</h3>
+          <a class="link" href="{{ facebook_page_url }}" target="_blank" rel="noopener">Visitar página</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Facebook SDK (solo para esta página) -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v18.0" nonce="ns"></script>
 
 <script>
   // Slideshow sencillo de portada si existen imágenes 1–4 en static/reservas/img/

@@ -115,13 +115,54 @@ body{
 .embed-fallback{padding:24px 0;border-top:1px solid var(--border)}
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
 
+/* Social */
+.social{padding:56px 0;background:linear-gradient(135deg, #1c2321 0%, #121716 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.social h2{font-size:32px;font-weight:700;margin:0 0 4px;color:var(--text)}
+.social > .container > p.muted{font-size:15px;margin:8px 0 28px}
+.social-grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:20px}
+.social-col{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:0 1px 4px rgba(15,31,24,0.08);transition:all 0.3s ease}
+.social-col:hover{box-shadow:0 8px 20px rgba(26,163,107,0.12);border-color:var(--primary)}
+.social-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.social-col-header h3{margin:0;font-size:20px;font-weight:700;color:var(--text)}
+.social-col-header .link{font-size:13px;font-weight:600}
+.instagram-embed-wrapper{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:16px;
+  background:linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+  padding:24px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 20px rgba(26,163,107,0.08);
+  margin-top:12px
+}
+.instagram-embed-wrapper iframe{
+  max-width:100%;
+  border-radius:14px;
+  border:2px solid var(--border);
+  box-shadow:0 8px 24px rgba(26,163,107,0.15);
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,0.05))
+}
+.cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px}
+.card{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;background:var(--surface);text-decoration:none;color:inherit;overflow:hidden;transition:all 0.3s ease;cursor:pointer}
+.card:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:0 8px 16px rgba(26,163,107,0.15)}
+.card .thumb{height:180px;background-size:cover;background-position:center;background-color:var(--border)}
+.card-body{padding:12px 14px}
+.card-title{font-weight:600;line-height:1.35;font-size:14px;color:var(--text)}
+.empty{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;background:var(--ghost-hover-bg)}
+.fb-page{margin:0 auto}
+
 /* Responsive */
 @media (max-width: 900px){
   .hero-grid{grid-template-columns:1fr}
   .features-grid{grid-template-columns:1fr 1fr}
   .products{grid-template-columns:1fr 1fr}
+  .social-grid{grid-template-columns:1fr}
+  .cards{grid-template-columns:repeat(2, 1fr)}
 }
 @media (max-width: 600px){
   .grid-2{grid-template-columns:1fr}
   .features-grid,.products{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
 }

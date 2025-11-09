@@ -1,7 +1,11 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargar variables de entorno desde .env
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = 'django-insecure-replace-this-for-prod'
 
@@ -85,3 +89,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # URL externa de la tienda
 EXTERNAL_SHOP_URL = 'https://natursur.herbalife.com/es-es/u'
+
+# Redes sociales
+# ID del canal de YouTube de @natursur (para feed RSS)
+YOUTUBE_CHANNEL_ID = 'UCryL5eZosDAQ4fDHuXK8pvw'
+# Username de Instagram para scrapear posts públicos (usando instagrapi)
+INSTAGRAM_USERNAME = os.getenv('INSTAGRAM_USERNAME', 'yosoyescalona')
