@@ -10,7 +10,6 @@ Proyecto base en Django para el sitio "NaturSur" con:
 ## Requisitos
 
 - Python 3.10+
-- macOS (probado en macOS)
 
 ## Instalación y ejecución
 
