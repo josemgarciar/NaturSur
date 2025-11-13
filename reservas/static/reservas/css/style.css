@@ -50,6 +50,46 @@ body{
 .hamburger{display:inline-grid;gap:5px;background:transparent;border:0;cursor:pointer}
 .hamburger span{display:block;width:28px;height:2px;background:#ffffff;border-radius:2px}
 
+/* Floating side menu panel (left side) */
+.menu-panel{
+  position:fixed;
+  left:18px; /* anchored to left side */
+  top:8vh;
+  bottom:8vh;
+  width:320px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:flex-start;
+  justify-content:flex-start;
+  padding:18px;
+  /* translucent background + blur for separation */
+  background: rgba(8,12,10,0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 18px 46px rgba(0,0,0,0.45);
+  transition:transform .22s cubic-bezier(.2,.9,.2,1),opacity .18s ease;
+  transform:translateX(-110%);
+  opacity:0;z-index:120;
+}
+.menu-panel.open{transform:translateX(0);opacity:1}
+.menu-panel .nav-item{color:#ffffff;text-decoration:none;padding:10px 12px;border-radius:10px;background:transparent;border:0;font-weight:700;width:100%}
+.menu-panel .nav-item:hover{background:rgba(255,255,255,0.04)}
+.menu-panel .logout-button{cursor:pointer;width:100%;text-align:left}
+
+@media (max-width:900px){
+  /* keep full-width dropdown on small screens */
+  .menu-panel{position:absolute;left:12px;right:12px;top:calc(100% + 8px);bottom:auto;width:auto;padding:12px;border-radius:10px;flex-direction:column}
+  .menu-panel.open{transform:translateY(0);opacity:1}
+}
+
+@media (max-width:900px){
+  .menu-panel{left:12px;right:12px;transform:translateY(0) scaleX(0);top:calc(100% + 8px);transform-origin:left top;display:flex;flex-direction:column;align-items:stretch}
+  .menu-panel.open{transform:translateY(0) scaleX(1)}
+}
+
 /* Hero */
 .hero{padding:48px 0 28px;border-bottom:1px solid var(--border)}
 .hero-cover{position:relative;overflow:hidden;padding:0;border:none;background: center/cover no-repeat var(--bg);background-image:var(--hero-image);min-height:48vh;display:grid;align-items:center}

@@ -16,28 +16,39 @@
 <body>
   <header class="ns-header gradient">
     <div class="container nav">
-      <div class="left">
-        <button class="hamburger" aria-label="Menú">
+      <div class="left" style="position:relative">
+        <button id="menuToggle" class="hamburger" aria-label="Menú" aria-expanded="false" aria-controls="menuPanel" onclick="window.toggleMenu && window.toggleMenu()">
           <span></span><span></span><span></span>
         </button>
         <a href="/" class="logo">NaturSur</a>
+
+        <!-- Horizontal menu panel that opens to the right -->
+        <div id="menuPanel" class="menu-panel" role="menu" aria-hidden="true">
+          <a class="nav-item" href="/">Inicio</a>
+          <!-- 'Mis cinco consejos' points to internal info page -->
+          <a class="nav-item" href="{% url 'mis_cinco_consejos' %}">Mis cinco consejos</a>
+          <a class="nav-item" href="{% url 'estudio_corporal' %}">Estudio corporal</a>
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              <a class="nav-item" href="{% url 'admin_reservations' %}">Panel reservas</a>
+            {% endif %}
+            <form method="post" action="{% url 'logout' %}" style="display:inline; margin:0">
+              {% csrf_token %}
+              <button type="submit" class="nav-item logout-button">Cerrar sesión</button>
+            </form>
+          {% else %}
+            <a class="nav-item" href="{% url 'login' %}">Iniciar sesión</a>
+            {# Registrarse moved to top navbar; removed from this menu panel per request #}
+          {% endif %}
+        </div>
       </div>
       <nav class="right">
-        <a class="nav-link" href="/">Inicio</a>
-        <a class="btn btn-pill btn-light" href="#reservas">Reservas</a>
-        <a class="btn btn-pill btn-light" href="{{ external_shop_url }}" target="_blank" rel="noopener noreferrer">Tienda</a>
+        <!-- Keep header uncluttered: only show quick user info on the right -->
         {% if user.is_authenticated %}
-          {% if user.is_staff %}
-            <a class="nav-link" href="{% url 'admin_reservations' %}">Panel reservas</a>
-          {% endif %}
           <span class="nav-link">Hola, {{ user.username }}</span>
-          <form method="post" action="{% url 'logout' %}" style="display:inline; margin:0">
-            {% csrf_token %}
-            <button type="submit" class="nav-link" style="background:none;border:0;padding:0;cursor:pointer">Cerrar sesión</button>
-          </form>
         {% else %}
           <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
-          <a class="nav-link" href="{% url 'signup' %}">Registrarse</a>
+          <a class="nav-link signup" href="{% url 'signup' %}">Registrarse</a>
         {% endif %}
       </nav>
     </div>
@@ -65,5 +76,6 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+  <script src="{% static 'reservas/js/menu.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner" style="display:grid;grid-template-columns:1fr 480px;gap:36px;align-items:center;">
+    <div>
+      <p class="pill">CONOCE EL ESTADO DE TU BIENESTAR</p>
+      <h1 style="color:var(--primary);font-size:48px;line-height:1.05;margin:6px 0 18px;">Autoevaluación corporal orientativa</h1>
+      <p class="lead" style="color:var(--muted);font-size:18px;max-width:48ch;">A través de esta autoevaluación corporal orientativa, obtendrás una visión más clara sobre el equilibrio de tu cuerpo y posibles áreas a mejorar. Es un primer paso para entender qué necesita tu organismo y cómo puedes empezar a cuidarte mejor.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-pill" href="#">COMPRUEBA TU ESTADO CORPORAL</a>
+      </div>
+    </div>
+    <div>
+      <img src="{% static 'reservas/img/estudio-hero.jpg' %}" alt="Estudio corporal" style="width:100%;height:auto;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);"/>
+    </div>
+  </div>
+</section>
+
+<section style="padding:40px 0;">
+  <div class="container">
+    <h2 style="margin-top:0;">¿Qué es esta autoevaluación?</h2>
+    <p class="muted">Esta breve guía te ayudará a identificar sensaciones, patrones y prioridades. No sustituye el diagnóstico profesional, pero puede orientarte sobre hábitos a mejorar y cuándo solicitar ayuda especializada.</p>
+  </div>
+</section>
+
+{% endblock %}

@@ -166,6 +166,18 @@ def reserva_exito(request):
     return render(request, 'reservas/booking_success.html')
 
 
+def estudio_corporal(request):
+    """Render simple informational page 'Estudio corporal'."""
+    return render(request, 'reservas/estudio_corporal.html')
+
+
+def mis_cinco_consejos(request):
+    """Render 'Mis cinco consejos' informational page (reused hero from attachment).
+    This page is internal and can be expanded later with contact form or application flow.
+    """
+    return render(request, 'reservas/mis_cinco_consejos.html')
+
+
 def tienda(request):
     # Redirige directamente a la tienda externa para evitar embedding en iframe.
     return redirect(settings.EXTERNAL_SHOP_URL)
