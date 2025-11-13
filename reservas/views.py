@@ -7,7 +7,8 @@ import urllib.request
 import urllib.error
 import json
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, date as ddate, time as dtime, timedelta
+from .models import Reservation as ReservationModel
 
 
 def _fetch_youtube_videos(channel_id: str, limit: int = 6):
@@ -84,6 +85,45 @@ def home(request):
     from .models import Offering
     offerings = Offering.objects.all().order_by('duration_minutes')
 
+    # Compute available times when offering and date are provided as GET params
+    available_times = None
+    offering_id = request.GET.get('offering')
+    date_str = request.GET.get('date')
+    if offering_id and date_str:
+        try:
+            offering_obj = Offering.objects.get(pk=offering_id)
+            # parse date yyyy-mm-dd
+            req_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            business_start = dtime(9, 0)
+            business_end = dtime(18, 0)
+            step = timedelta(minutes=30)
+            duration = timedelta(minutes=(offering_obj.duration_minutes or 60))
+
+            slots = []
+            current_dt = datetime.combine(req_date, business_start)
+            last_start_dt = datetime.combine(req_date, business_end) - duration
+
+            # reservations on that date
+            qs = ReservationModel.objects.filter(date=req_date)
+
+            while current_dt <= last_start_dt:
+                slot_end = current_dt + duration
+                overlaps = False
+                for r in qs:
+                    r_start = datetime.combine(r.date, r.time)
+                    r_end = r_start + timedelta(minutes=(r.offering.duration_minutes if r.offering else 60))
+                    # overlap if start < r_end and r_start < end
+                    if (current_dt < r_end) and (r_start < slot_end):
+                        overlaps = True
+                        break
+                if not overlaps and current_dt >= datetime.combine(ddate.today(), dtime(0, 0)):
+                    slots.append(current_dt.time().strftime('%H:%M'))
+                current_dt = current_dt + step
+
+            available_times = slots
+        except Exception:
+            available_times = None
+
     return render(request, 'reservas/home.html', {
         'form': form,
         'offerings': offerings,
@@ -92,6 +132,8 @@ def home(request):
         'facebook_page_url': 'https://www.facebook.com/natursur',
         'youtube_channel_url': 'https://www.youtube.com/@natursur',
         'instagram_profile_url': 'https://www.instagram.com/yosoyescalona',
+        'available_times': available_times,
+        'selected_date': date_str,
     })
 
 

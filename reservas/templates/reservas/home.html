@@ -8,29 +8,31 @@
     <p class="lead">Cuidado, nutrición y experiencias relajantes con esencia del Sur.</p>
     <div class="cta-row">
   <a class="btn btn-primary btn-pill" href="#reservas">Reservar</a>
-  <a class="btn btn-light btn-pill" href="{% url 'tienda' %}">Tienda</a>
+  <a class="btn btn-light btn-pill" href="{{ external_shop_url }}" target="_blank" rel="noopener noreferrer">Tienda</a>
     </div>
   </div>
 </section>
 
-<section class="features">
-  <div class="container features-grid">
-    <div class="feature">
-      <h4>Masaje y Osteopatía</h4>
-      <p>A través de técnicas de masaje y osteopatía, trabajamos para liberar restricciones, mejorar la postura y restaurar la armonía de tu organismo.</p>
+<section class="pricing-cards">
+  <div class="container cards-grid">
+    {% for o in offerings %}
+    <div class="card price-card {% if forloop.first %}highlight{% endif %}">
+      <div class="card-body">
+        <div class="card-info">
+          <h4 class="card-title">{{ o.name }}</h4>
+          <div class="card-price">€{{ o.price_eur }}</div>
+          <div class="card-duration">{{ o.duration_minutes }}′</div>
+        </div>
+        <div class="card-action">
+          <form method="post" action="{% url 'reservar' %}">
+            {% csrf_token %}
+            <input type="hidden" name="offering" value="{{ o.id }}">
+            <button class="btn btn-primary btn-pill">Reservar</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="feature">
-      <h4>Par Biomagnético</h4>
-      <p>El Par Biomagnético es una técnica que utiliza imanes para restaurar el balance natural del cuerpo, favoreciendo la capacidad de recuperación del organismo.</p>
-    </div>
-    <div class="feature">
-      <h4>Técnicas Emocionales</h4>
-      <p>Muchas tensiones musculares, bloqueos o molestias físicas tienen un origen emocional. Utilizo diversas técnicas para ayudarte a liberar esas cargas y sentirte más ligero y equilibrado.</p>
-    </div>
-    <div class="feature">
-      <h4>Asesoramiento Nutricional y Estilo de Vida</h4>
-      <p>A través de un enfoque basado en la naturopatía, te ayudo a mejorar tu alimentación y a crear hábitos saludables que realmente funcionen para ti.</p>
-    </div>
+    {% endfor %}
   </div>
 </section>
 
@@ -65,9 +67,9 @@
           {{ form.phone.errors }}
         </div>
         <div class="form-field">
-          <label for="id_service">{{ form.service.label }}</label>
-          {{ form.service }}
-          {{ form.service.errors }}
+          <label for="id_offering">{{ form.offering.label|default:'Oferta' }}</label>
+          {{ form.offering }}
+          {{ form.offering.errors }}
         </div>
       </div>
 
@@ -79,8 +81,25 @@
         </div>
         <div class="form-field">
           <label for="id_time">{{ form.time.label }}</label>
-          {{ form.time }}
-          {{ form.time.errors }}
+          {% if available_times %}
+            <div class="available-times">
+              {% if available_times|length == 0 %}
+                <p class="muted">No hay horas disponibles para la fecha seleccionada.</p>
+              {% else %}
+                <div class="times-grid">
+                  {% for t in available_times %}
+                    <label class="time-option">
+                      <input type="radio" name="time" value="{{ t }}" {% if form.time.value == t %}checked{% endif %}>
+                      <span class="time-label">{{ t }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% else %}
+            {{ form.time }}
+            {{ form.time.errors }}
+          {% endif %}
         </div>
       </div>
 
@@ -95,6 +114,38 @@
     </form>
   </div>
 </section>
+
+<script>
+  // Si la URL contiene ?offering=ID o un anchor #reservas, enfocamos el formulario
+  (function(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('offering') || window.location.hash === '#reservas'){
+      const el = document.getElementById('reservas');
+      if(el) el.scrollIntoView({behavior:'smooth'});
+    }
+  })();
+</script>
+
+<script>
+  // When the user selects an offering and a date, reload the page with those
+  // params so the server can compute available times and render them.
+  (function(){
+    const dateEl = document.getElementById('id_date');
+    const offeringEl = document.getElementById('id_offering');
+    function reloadIfBoth(){
+      const d = dateEl ? dateEl.value : '';
+      const o = offeringEl ? offeringEl.value : '';
+      if(o && d){
+        const u = new URL(window.location.href);
+        u.searchParams.set('offering', o);
+        u.searchParams.set('date', d);
+        window.location.href = u.pathname + '?' + u.searchParams.toString() + '#reservas';
+      }
+    }
+    if(dateEl) dateEl.addEventListener('change', reloadIfBoth);
+    if(offeringEl) offeringEl.addEventListener('change', function(){ setTimeout(reloadIfBoth, 10); });
+  })();
+</script>
 
 <section class="social">
   <div class="container">

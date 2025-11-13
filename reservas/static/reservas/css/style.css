@@ -150,6 +150,20 @@ body{
 .card .thumb{height:180px;background-size:cover;background-position:center;background-color:var(--border)}
 .card-body{padding:12px 14px}
 .card-title{font-weight:600;line-height:1.35;font-size:14px;color:var(--text)}
+
+/* Pricing cards horizontal style */
+.pricing-cards{padding:28px 0;background:var(--surface);border-bottom:1px solid var(--border)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:stretch}
+.price-card{display:flex;flex-direction:row;align-items:center;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(15,31,24,0.04)}
+.price-card .card-body{display:flex;align-items:center;justify-content:space-between;width:100%;padding:18px}
+.price-card .card-info{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.price-card .card-price{font-size:28px;font-weight:800;color:var(--primary-700)}
+.price-card .card-duration{font-size:14px;color:var(--muted)}
+.price-card .card-action{display:flex;align-items:center;justify-content:center;margin-left:12px}
+.price-card .card-action .btn{padding:10px 22px}
+.price-card.highlight{background:linear-gradient(180deg, rgba(16,93,86,0.95), rgba(11,54,53,0.95));color:#fff}
+.price-card.highlight .card-price{color:#fff}
+.price-card.highlight .btn{background:linear-gradient(180deg, #00a79b, #008f84);color:#fff}
 .empty{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;background:var(--ghost-hover-bg)}
 .fb-page{margin:0 auto}
 
@@ -160,6 +174,7 @@ body{
   .products{grid-template-columns:1fr 1fr}
   .social-grid{grid-template-columns:1fr}
   .cards{grid-template-columns:repeat(2, 1fr)}
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width: 600px){
   .grid-2{grid-template-columns:1fr}
