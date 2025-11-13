@@ -99,6 +99,10 @@ body{
   border-color:var(--primary-700);box-shadow:0 0 0 4px var(--ring)
 }
 .alert{background:#e6fff5;border:1px solid #b5f0d8;color:#0f6e4a;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+/* Message variants */
+.alert.info{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.alert.success{background:#e6fff5;border:1px solid #b5f0d8;color:#0f6e4a}
+.alert.error{background:#ffe9e9;border:1px solid #f0bcbc;color:#6a1a1a}
 
 /* Success */
 .center{display:grid;place-items:center;min-height:50vh}

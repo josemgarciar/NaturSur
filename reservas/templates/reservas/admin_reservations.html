@@ -1,0 +1,35 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <h2>Reservas (Panel administrativo)</h2>
+  <p class="muted">Vista general de todas las reservas. Solo accesible por personal.</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Cliente</th>
+        <th>Oferta</th>
+        <th>Notas</th>
+        <th>Creada</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reservations %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td>{{ r.time }}</td>
+        <td>{{ r.name }} &lt;{{ r.email }}&gt; {{ r.phone }}</td>
+        <td>{{ r.offering.name if r.offering else r.service }}</td>
+        <td>{{ r.notes }}</td>
+        <td>{{ r.created_at }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6">No hay reservas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

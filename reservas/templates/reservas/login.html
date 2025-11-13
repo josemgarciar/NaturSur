@@ -1,0 +1,28 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="booking">
+  <div class="container">
+    <div class="success-card" style="max-width:600px;margin:18px auto;">
+      <h2>Iniciar sesión</h2>
+      <p class="muted">Accede para gestionar tus reservas.</p>
+      <form method="post" class="form" style="margin-top:12px;">
+        {% csrf_token %}
+        <div class="form-field">
+          <label for="id_username">Usuario</label>
+          <input type="text" name="username" id="id_username" class="" required>
+        </div>
+        <div class="form-field">
+          <label for="id_password">Contraseña</label>
+          <input type="password" name="password" id="id_password" class="" required>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+          <button class="btn btn-primary" type="submit">Entrar</button>
+          <a class="btn btn-ghost" href="{% url 'signup' %}">Crear cuenta</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

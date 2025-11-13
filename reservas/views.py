@@ -10,6 +10,15 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, date as ddate, time as dtime, timedelta
 from .models import Reservation as ReservationModel
 
+# Authentication imports
+from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import get_user_model
+
 
 def _fetch_youtube_videos(channel_id: str, limit: int = 6):
     """
@@ -160,3 +169,36 @@ def reserva_exito(request):
 def tienda(request):
     # Redirige directamente a la tienda externa para evitar embedding en iframe.
     return redirect(settings.EXTERNAL_SHOP_URL)
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # By default new users are not staff
+            login(request, user)
+            messages.success(request, 'Cuenta creada. Bienvenido, ahora puedes reservar.')
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'reservas/signup.html', {'form': form})
+
+
+@user_passes_test(lambda u: u.is_staff)
+def admin_reservations(request):
+    # View that shows all reservations to staff users
+    from .models import Reservation
+    qs = Reservation.objects.select_related('offering').order_by('-date', '-time')
+    return render(request, 'reservas/admin_reservations.html', {'reservations': qs})
+
+
+def logout_view(request):
+    """Logout view that accepts GET and POST to simplify client-side logout links."""
+    if request.method in ('POST', 'GET'):
+        logout(request)
+        messages.info(request, 'Has cerrado sesión.')
+        return redirect('home')
+    # method not allowed
+    from django.http import HttpResponseNotAllowed
+    return HttpResponseNotAllowed(['GET', 'POST'])
