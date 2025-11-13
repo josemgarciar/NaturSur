@@ -69,16 +69,24 @@ def _fetch_instagram_posts(username: str, limit: int = 6):
 
 
 def home(request):
-    form = ReservationForm()
+    # If an offering id is provided in GET, preselect it in the form
+    offering_prefill = request.GET.get('offering')
+    if offering_prefill:
+        form = ReservationForm(initial={'offering': offering_prefill})
+    else:
+        form = ReservationForm()
     # Social feeds (opcionales, tolerantes a fallos)
     youtube_channel_id = getattr(settings, 'YOUTUBE_CHANNEL_ID', os.getenv('YOUTUBE_CHANNEL_ID', ''))
     instagram_username = getattr(settings, 'INSTAGRAM_USERNAME', os.getenv('INSTAGRAM_USERNAME', 'yosoyescalona'))
 
     youtube_videos = _fetch_youtube_videos(youtube_channel_id, limit=6)
     instagram_posts = _fetch_instagram_posts(instagram_username, limit=6)
+    from .models import Offering
+    offerings = Offering.objects.all().order_by('duration_minutes')
 
     return render(request, 'reservas/home.html', {
         'form': form,
+        'offerings': offerings,
         'youtube_videos': youtube_videos,
         'instagram_posts': instagram_posts,
         'facebook_page_url': 'https://www.facebook.com/natursur',
@@ -90,6 +98,10 @@ def home(request):
 def reservar(request):
     if request.method != 'POST':
         return redirect('home')
+    # Quick-reserve button posts only 'offering' when user clicks price card
+    if 'offering' in request.POST and not any(k in request.POST for k in ('name','email','phone')):
+        # redirect to home with offering preselected (anchor to reservas)
+        return redirect(f"{reverse('home')}?offering={request.POST.get('offering')}#reservas")
 
     form = ReservationForm(request.POST)
     if form.is_valid():
@@ -104,9 +116,5 @@ def reserva_exito(request):
 
 
 def tienda(request):
-    # Intenta embeber la tienda externa dentro de un iframe.
-    # Nota: si el dominio remoto bloquea el embedding (X-Frame-Options/CSP),
-    # mostraremos un fallback con enlace directo.
-    return render(request, 'reservas/tienda.html', {
-        'shop_url': settings.EXTERNAL_SHOP_URL,
-    })
+    # Redirige directamente a la tienda externa para evitar embedding en iframe.
+    return redirect(settings.EXTERNAL_SHOP_URL)
