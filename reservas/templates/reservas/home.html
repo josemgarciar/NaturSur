@@ -3,6 +3,8 @@
 
 {% block content %}
 <section class="hero hero-cover" style="--hero-image: url('{% static 'reservas/img/1.png' %}')">
+  <div class="hero-bg-layer" aria-hidden="true"></div>
+  <div class="hero-bg-layer" aria-hidden="true"></div>
   <div class="container hero-inner">
     <h1>Te ayudamos a alcanzar tu bienestar</h1>
     <p class="lead">Cuidado, nutrición y experiencias relajantes con esencia del Sur.</p>
@@ -190,7 +192,7 @@
         </div>
 
         <div class="instagram-embed-wrapper">
-          <iframe src="https://www.instagram.com/yosoyescalona/embed" width="100%" height="600" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+          <iframe src="https://www.instagram.com/yosoyescalona/embed" width="100%" height="600" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
         </div>
       </div>
 
@@ -209,7 +211,7 @@
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v18.0" nonce="ns"></script>
 
 <script>
-  // Slideshow sencillo de portada si existen imágenes 1–4 en static/reservas/img/
+  // Slideshow con crossfade + efecto Ken Burns en capas de fondo
   (function(){
     const images = [
       "{% static 'reservas/img/1.png' %}",
@@ -217,12 +219,44 @@
       "{% static 'reservas/img/3.png' %}",
       "{% static 'reservas/img/4.png' %}",
     ];
-    let i = 0;
     const hero = document.querySelector('.hero.hero-cover');
-    function next(){
-      i = (i+1) % images.length;
-      hero.style.setProperty('--hero-image', `url('${images[i]}')`);
+    const layers = hero ? hero.querySelectorAll('.hero-bg-layer') : [];
+    if(!hero || layers.length < 2) return;
+
+    // Estado
+    let imgIndex = 0;      // índice de imagen actual
+    let activeLayer = 0;   // 0 o 1 para la capa activa
+
+    // Inicializa las dos primeras capas
+    layers[0].style.backgroundImage = `url('${images[0]}')`;
+    layers[0].classList.add('is-active');
+    layers[1].style.backgroundImage = `url('${images[1 % images.length]}')`;
+
+    function preload(src){
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = resolve; // No bloquear si falla
+        img.src = src;
+      });
     }
+
+    async function next(){
+      const nextIndex = (imgIndex + 1) % images.length;
+      const nextLayer = 1 - activeLayer; // alternar entre 0 y 1
+      await preload(images[nextIndex]);
+      layers[nextLayer].style.backgroundImage = `url('${images[nextIndex]}')`;
+      // Crossfade + suave zoom
+      layers[activeLayer].classList.remove('is-active');
+      layers[nextLayer].classList.add('is-active');
+      activeLayer = nextLayer;
+      imgIndex = nextIndex;
+
+      // Prepara en segundo plano la siguiente imagen
+      const afterNext = (imgIndex + 1) % images.length;
+      preload(images[afterNext]);
+    }
+
     setInterval(next, 6000);
   })();
 </script>

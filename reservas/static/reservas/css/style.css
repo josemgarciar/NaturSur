@@ -52,8 +52,13 @@ body{
 
 /* Hero */
 .hero{padding:48px 0 28px;border-bottom:1px solid var(--border)}
-.hero-cover{padding:0;border:none;background: center/cover no-repeat var(--bg);background-image:var(--hero-image);min-height:48vh;display:grid;align-items:center}
-.hero-inner{padding:56px 0}
+.hero-cover{position:relative;overflow:hidden;padding:0;border:none;background: center/cover no-repeat var(--bg);background-image:var(--hero-image);min-height:48vh;display:grid;align-items:center}
+.hero-inner{position:relative;z-index:2;padding:56px 0}
+/* Capas de fondo para crossfade + Ken Burns */
+.hero-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transform:scale(1.06);transition:opacity .9s ease, transform 6s ease;will-change:opacity, transform;z-index:1}
+.hero-bg-layer.is-active{opacity:1;transform:scale(1)}
+/* Sombra/gradiente para legibilidad del texto */
+.hero-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.35));z-index:1;pointer-events:none}
 .hero h1{font-size:40px;line-height:1.1;margin:0 0 12px;color:#ffffff;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero .lead{color:#f0fff7;max-width:60ch;text-shadow:0 2px 12px rgba(0,0,0,.25)}
 .pill{display:inline-block;background:#e9fbf3;border:1px solid #c8efe0;border-radius:999px;color:#136b49;font-size:12px;padding:4px 10px;margin-bottom:8px}
