@@ -30,7 +30,7 @@
           <a class="nav-item" href="{% url 'estudio_corporal' %}">Estudio corporal</a>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
-              <a class="nav-item" href="{% url 'admin_reservations' %}">Panel reservas</a>
+              <a class="nav-item" href="{% url 'admin_dashboard' %}">🔧 Panel Admin</a>
             {% endif %}
             <form method="post" action="{% url 'logout' %}" style="display:inline; margin:0">
               {% csrf_token %}

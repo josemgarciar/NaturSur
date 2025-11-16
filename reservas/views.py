@@ -18,6 +18,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
 
 
 def _fetch_youtube_videos(channel_id: str, limit: int = 6):
@@ -204,6 +205,29 @@ def admin_reservations(request):
     return render(request, 'reservas/admin_reservations.html', {'reservations': qs})
 
 
+@user_passes_test(lambda u: u.is_staff)
+def admin_clients(request):
+    # View that shows all registered users (clients)
+    User = get_user_model()
+    # Get all non-staff users (regular clients), ordered by date joined
+    clients = User.objects.filter(is_staff=False).order_by('-date_joined')
+    return render(request, 'reservas/admin_clients.html', {'clients': clients})
+
+
+@user_passes_test(lambda u: u.is_staff)
+def admin_dashboard(request):
+    # Admin dashboard with overview
+    from .models import Reservation
+    User = get_user_model()
+    reservations_count = Reservation.objects.count()
+    clients_count = User.objects.filter(is_staff=False).count()
+    context = {
+        'reservations_count': reservations_count,
+        'clients_count': clients_count,
+    }
+    return render(request, 'reservas/admin_dashboard.html', context)
+
+
 def logout_view(request):
     """Logout view that accepts GET and POST to simplify client-side logout links."""
     if request.method in ('POST', 'GET'):
@@ -213,3 +237,51 @@ def logout_view(request):
     # method not allowed
     from django.http import HttpResponseNotAllowed
     return HttpResponseNotAllowed(['GET', 'POST'])
+
+
+@user_passes_test(lambda u: u.is_staff)
+def delete_reservation(request, reservation_id):
+    """Delete a reservation (admin only)."""
+    from .models import Reservation
+    reservation = Reservation.objects.get(id=reservation_id)
+    
+    if request.method == 'POST':
+        reservation.delete()
+        messages.success(request, f'Reserva de {reservation.name} del {reservation.date} cancelada.')
+        return redirect('admin_reservations')
+    
+    # GET - show confirmation page
+    return render(request, 'reservas/confirm_delete_reservation.html', {'reservation': reservation})
+
+
+@user_passes_test(lambda u: u.is_staff)
+def delete_user(request, user_id):
+    """Delete a user (admin only)."""
+    User = get_user_model()
+    user_to_delete = User.objects.get(id=user_id)
+    
+    # Prevent admin from deleting themselves or other admins
+    if user_to_delete.is_staff or user_to_delete == request.user:
+        messages.error(request, 'No puedes eliminar este usuario.')
+        return redirect('admin_clients')
+    
+    if request.method == 'POST':
+        username = user_to_delete.username
+        user_to_delete.delete()
+        messages.success(request, f'Usuario "{username}" eliminado.')
+        return redirect('admin_clients')
+    
+    # GET - show confirmation page
+    return render(request, 'reservas/confirm_delete_user.html', {'user_to_delete': user_to_delete})
+
+
+class CustomLoginView(LoginView):
+    """Custom login view that redirects staff/admin users to admin panel."""
+    template_name = 'reservas/login.html'
+    
+    def get_success_url(self):
+        """Redirect to admin dashboard if user is staff, otherwise to home."""
+        if self.request.user.is_staff:
+            return reverse('admin_dashboard')
+        return reverse('home')
+

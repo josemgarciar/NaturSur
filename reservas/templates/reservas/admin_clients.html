@@ -1,0 +1,64 @@
+{% extends 'reservas/admin_base.html' %}
+
+{% block admin_content %}
+<div class="admin-content-card">
+  <h2>Listado de Clientes</h2>
+  <p class="muted">Todos los usuarios registrados en NaturSur (excluye administradores).</p>
+  
+  {% if clients %}
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Nombre Completo</th>
+          <th>Fecha de Registro</th>
+          <th>Última conexión</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td><strong>{{ client.username }}</strong></td>
+          <td><a href="mailto:{{ client.email }}">{{ client.email }}</a></td>
+          <td>{{ client.get_full_name|default:"—" }}</td>
+          <td>{{ client.date_joined|date:"d/m/Y H:i" }}</td>
+          <td>{{ client.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+          <td>
+            <a href="{% url 'delete_user' client.id %}" class="action-link delete-link" title="Eliminar usuario">
+              🗑️
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div style="text-align: center; padding: 40px; color: #999;">
+      <p>No hay clientes registrados todavía.</p>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .action-link {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+  }
+  
+  .action-link:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+  }
+  
+  .delete-link:hover {
+    background: #ffebee;
+  }
+</style>
+{% endblock %}

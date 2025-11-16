@@ -1,35 +1,76 @@
-{% extends 'reservas/base.html' %}
-{% load static %}
+{% extends 'reservas/admin_base.html' %}
 
-{% block content %}
-<div class="container">
-  <h2>Reservas (Panel administrativo)</h2>
-  <p class="muted">Vista general de todas las reservas. Solo accesible por personal.</p>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Hora</th>
-        <th>Cliente</th>
-        <th>Oferta</th>
-        <th>Notas</th>
-        <th>Creada</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in reservations %}
-      <tr>
-        <td>{{ r.date }}</td>
-        <td>{{ r.time }}</td>
-        <td>{{ r.name }} &lt;{{ r.email }}&gt; {{ r.phone }}</td>
-        <td>{{ r.offering.name if r.offering else r.service }}</td>
-        <td>{{ r.notes }}</td>
-        <td>{{ r.created_at }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="6">No hay reservas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% block admin_content %}
+<div class="admin-content-card">
+  <h2>Listado de Reservas</h2>
+  <p class="muted">Todas las reservas realizadas por los clientes, ordenadas por fecha más reciente.</p>
+  
+  {% if reservations %}
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Cliente</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Oferta/Servicio</th>
+          <th>Notas</th>
+          <th>Creada</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td>{{ r.date }}</td>
+          <td>{{ r.time }}</td>
+          <td>{{ r.name }}</td>
+          <td>{{ r.email }}</td>
+          <td>{{ r.phone }}</td>
+          <td>
+            {% if r.offering %}
+              {{ r.offering.name }} ({{ r.offering.duration_minutes }}′)
+            {% else %}
+              {{ r.get_service_display }}
+            {% endif %}
+          </td>
+          <td>{{ r.notes|truncatewords:5 }}</td>
+          <td>{{ r.created_at|date:"d/m/Y H:i" }}</td>
+          <td>
+            <a href="{% url 'delete_reservation' r.id %}" class="action-link delete-link" title="Eliminar reserva">
+              🗑️
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div style="text-align: center; padding: 40px; color: #999;">
+      <p>No hay reservas registradas todavía.</p>
+    </div>
+  {% endif %}
 </div>
+
+<style>
+  .action-link {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+  }
+  
+  .action-link:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+  }
+  
+  .delete-link:hover {
+    background: #ffebee;
+  }
+</style>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'reservas/admin_base.html' %}
+
+{% block admin_content %}
+<div class="admin-stats">
+  <div class="stat-card">
+    <h3>{{ reservations_count }}</h3>
+    <p>Reservas totales</p>
+  </div>
+  <div class="stat-card">
+    <h3>{{ clients_count }}</h3>
+    <p>Clientes únicos</p>
+  </div>
+</div>
+
+<div class="admin-content-card">
+  <h2>Bienvenido al Panel de Administración</h2>
+  <p>Desde aquí puedes gestionar todas las reservas y clientes de NaturSur.</p>
+  <ul>
+    <li><strong>📅 Reservas:</strong> Ver todas las reservas realizadas por los clientes, filtradas por fecha.</li>
+    <li><strong>👥 Clientes:</strong> Consultar información de contacto de todos los clientes.</li>
+  </ul>
+</div>
+{% endblock %}
