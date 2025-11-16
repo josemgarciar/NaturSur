@@ -9,6 +9,7 @@ import json
 import xml.etree.ElementTree as ET
 from datetime import datetime, date as ddate, time as dtime, timedelta
 from .models import Reservation as ReservationModel
+from django.http import JsonResponse
 
 # Authentication imports
 from django.contrib.auth import login
@@ -81,10 +82,25 @@ def _fetch_instagram_posts(username: str, limit: int = 6):
 def home(request):
     # If an offering id is provided in GET, preselect it in the form
     offering_prefill = request.GET.get('offering')
+    # Prepare initial values for the reservation form
+    initial = {}
     if offering_prefill:
-        form = ReservationForm(initial={'offering': offering_prefill})
-    else:
-        form = ReservationForm()
+        initial['offering'] = offering_prefill
+    # If user is authenticated, prefill name and email when available
+    if request.user.is_authenticated:
+        full_name = (getattr(request.user, 'first_name', '') + ' ' + getattr(request.user, 'last_name', '')).strip()
+        initial['name'] = full_name if full_name else getattr(request.user, 'username', '')
+        if getattr(request.user, 'email', ''):
+            initial['email'] = request.user.email
+
+    form = ReservationForm(initial=initial) if initial else ReservationForm()
+    # Prevent selecting past dates in the date picker: set min to today (YYYY-MM-DD)
+    try:
+        today_str = ddate.today().isoformat()
+        if 'date' in form.fields:
+            form.fields['date'].widget.attrs['min'] = today_str
+    except Exception:
+        pass
     # Social feeds (opcionales, tolerantes a fallos)
     youtube_channel_id = getattr(settings, 'YOUTUBE_CHANNEL_ID', os.getenv('YOUTUBE_CHANNEL_ID', ''))
     instagram_username = getattr(settings, 'INSTAGRAM_USERNAME', os.getenv('INSTAGRAM_USERNAME', 'yosoyescalona'))
@@ -98,6 +114,19 @@ def home(request):
     available_times = None
     offering_id = request.GET.get('offering')
     date_str = request.GET.get('date')
+    # Also prepare a full list of slots for UI when no date is selected
+    all_slots = []
+    try:
+        business_start = dtime(9, 0)
+        business_end = dtime(18, 0)
+        step = timedelta(minutes=30)
+        current_dt = datetime.combine(ddate.today(), business_start)
+        last_start_dt = datetime.combine(ddate.today(), business_end) - step
+        while current_dt <= last_start_dt:
+            all_slots.append(current_dt.time().strftime('%H:%M'))
+            current_dt = current_dt + step
+    except Exception:
+        all_slots = []
     if offering_id and date_str:
         try:
             offering_obj = Offering.objects.get(pk=offering_id)
@@ -143,6 +172,7 @@ def home(request):
         'instagram_profile_url': 'https://www.instagram.com/yosoyescalona',
         'available_times': available_times,
         'selected_date': date_str,
+        'all_slots': all_slots,
     })
 
 
@@ -176,6 +206,47 @@ def mis_cinco_consejos(request):
     This page is internal and can be expanded later with contact form or application flow.
     """
     return render(request, 'reservas/mis_cinco_consejos.html')
+
+
+def available_times_api(request):
+    """Return JSON list of available time strings (HH:MM) for a given offering and date.
+    GET params: offering (id), date (YYYY-MM-DD)
+    """
+    offering_id = request.GET.get('offering')
+    date_str = request.GET.get('date')
+    if not offering_id or not date_str:
+        return JsonResponse({'times': []})
+    try:
+        from .models import Offering
+        offering_obj = Offering.objects.get(pk=offering_id)
+        req_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        business_start = dtime(9, 0)
+        business_end = dtime(18, 0)
+        step = timedelta(minutes=30)
+        duration = timedelta(minutes=(offering_obj.duration_minutes or 60))
+
+        slots = []
+        current_dt = datetime.combine(req_date, business_start)
+        last_start_dt = datetime.combine(req_date, business_end) - duration
+
+        qs = ReservationModel.objects.filter(date=req_date)
+
+        while current_dt <= last_start_dt:
+            slot_end = current_dt + duration
+            overlaps = False
+            for r in qs:
+                r_start = datetime.combine(r.date, r.time)
+                r_end = r_start + timedelta(minutes=(r.offering.duration_minutes if r.offering else 60))
+                if (current_dt < r_end) and (r_start < slot_end):
+                    overlaps = True
+                    break
+            if not overlaps and current_dt >= datetime.combine(ddate.today(), dtime(0, 0)):
+                slots.append(current_dt.time().strftime('%H:%M'))
+            current_dt = current_dt + step
+
+        return JsonResponse({'times': slots})
+    except Exception:
+        return JsonResponse({'times': []})
 
 
 def tienda(request):
