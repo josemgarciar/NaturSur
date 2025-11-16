@@ -1,0 +1,26 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+{% static 'reservas/img/back-unete-al-equipo.png' as bg_image %}
+<section class="hero" style="background-image: url('{{ bg_image }}'); background-size: cover; background-position: center;">
+  <div class="container hero-inner" style="display:grid;grid-template-columns:1fr 480px;gap:36px;align-items:center;">
+    <div>
+      <p class="pill">¡BUSCO PERSONAL!</p>
+      <h1 style="color:var(--primary);font-size:48px;line-height:1.05;margin:6px 0 18px;">Únete al Equipo y Genera Ingresos Extra</h1>
+      <p class="lead" style="color:var(--muted);font-size:18px;max-width:64ch;">Si buscas una oportunidad para ganar dinero extra y formar parte de un equipo comprometido con el bienestar, esta es tu oportunidad. Descubre cómo puedes empezar hoy mismo.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-pill" href="https://wdtinfo.com/res/55862/326254?source=mobile" target="_blank" rel="noopener noreferrer">ÚNETE AL EQUIPO</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:40px 0;">
+  <div class="container">
+    <h2 style="margin-top:0;">¿Te interesa?</h2>
+    <p class="muted">Envíanos tu CV o ponte en contacto para recibir más información sobre cómo colaborar con nosotros. Podemos ofrecer formación, horarios flexibles y una comunidad centrada en el bienestar.</p>
+  </div>
+</section>
+
+{% endblock %}
