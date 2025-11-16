@@ -2,7 +2,7 @@
 
 {% block admin_content %}
 <div class="admin-content-card">
-  <h2>Listado de Clientes</h2>
+  <h2>👥 Listado de Clientes</h2>
   <p class="muted">Todos los usuarios registrados en NaturSur (excluye administradores).</p>
   
   {% if clients %}
@@ -35,30 +35,22 @@
       </tbody>
     </table>
   {% else %}
-    <div style="text-align: center; padding: 40px; color: #999;">
-      <p>No hay clientes registrados todavía.</p>
+    <div class="empty-state">
+      <p>👥 No hay clientes registrados todavía.</p>
     </div>
   {% endif %}
 </div>
 
 <style>
-  .action-link {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state p {
     font-size: 16px;
-  }
-  
-  .action-link:hover {
-    background: #f0f0f0;
-    transform: scale(1.1);
-  }
-  
-  .delete-link:hover {
-    background: #ffebee;
+    margin: 0;
   }
 </style>
 {% endblock %}

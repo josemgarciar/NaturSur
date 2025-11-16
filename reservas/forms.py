@@ -3,6 +3,8 @@ from .models import Reservation
 from django.utils import timezone
 from .models import Reservation as ReservationModel
 from datetime import datetime, timedelta
+import re
+from django.core.exceptions import ValidationError
 
 
 class DateInput(forms.DateInput):
@@ -11,6 +13,18 @@ class DateInput(forms.DateInput):
 
 class TimeInput(forms.TimeInput):
     input_type = 'time'
+
+
+def validate_phone(value):
+    """Valida que el teléfono sea un número válido (7-15 dígitos)."""
+    # Elimina espacios, guiones, paréntesis y el símbolo +
+    cleaned = re.sub(r'[\s\-\(\)\+]', '', value)
+    # Verifica que solo contenga dígitos
+    if not cleaned.isdigit():
+        raise ValidationError('El teléfono solo puede contener dígitos, espacios, guiones o paréntesis.')
+    # Verifica que tenga una longitud válida (7-15 dígitos)
+    if len(cleaned) < 7 or len(cleaned) > 15:
+        raise ValidationError('El teléfono debe tener entre 7 y 15 dígitos.')
 
 
 class ReservationForm(forms.ModelForm):
@@ -23,16 +37,24 @@ class ReservationForm(forms.ModelForm):
             'date': DateInput(),
             'time': TimeInput(),
             'notes': forms.Textarea(attrs={'rows': 3}),
+            'phone': forms.TextInput(attrs={'placeholder': '+34 XXX XXX XXX'}),
         }
         labels = {
             'name': 'Nombre',
             'email': 'Correo electrónico',
             'phone': 'Teléfono',
+            'offering': 'Oferta',
             'service': 'Servicio',
             'date': 'Fecha',
             'time': 'Hora',
             'notes': 'Notas',
         }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '')
+        if phone:
+            validate_phone(phone)
+        return phone
 
     def clean(self):
         cleaned = super().clean()

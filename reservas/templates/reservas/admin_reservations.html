@@ -2,7 +2,7 @@
 
 {% block admin_content %}
 <div class="admin-content-card">
-  <h2>Listado de Reservas</h2>
+  <h2>📅 Listado de Reservas</h2>
   <p class="muted">Todas las reservas realizadas por los clientes, ordenadas por fecha más reciente.</p>
   
   {% if reservations %}
@@ -14,7 +14,8 @@
           <th>Cliente</th>
           <th>Email</th>
           <th>Teléfono</th>
-          <th>Oferta/Servicio</th>
+          <th>Oferta</th>
+          <th>Servicio</th>
           <th>Notas</th>
           <th>Creada</th>
           <th>Acciones</th>
@@ -26,13 +27,20 @@
           <td>{{ r.date }}</td>
           <td>{{ r.time }}</td>
           <td>{{ r.name }}</td>
-          <td>{{ r.email }}</td>
-          <td>{{ r.phone }}</td>
+          <td><a href="mailto:{{ r.email }}">{{ r.email }}</a></td>
+          <td><a href="tel:{{ r.phone }}">{{ r.phone }}</a></td>
           <td>
             {% if r.offering %}
-              {{ r.offering.name }} ({{ r.offering.duration_minutes }}′)
+              {{ r.offering.name }} ({{ r.offering.price_eur }}€)
             {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% if r.service %}
               {{ r.get_service_display }}
+            {% else %}
+              —
             {% endif %}
           </td>
           <td>{{ r.notes|truncatewords:5 }}</td>
@@ -47,30 +55,22 @@
       </tbody>
     </table>
   {% else %}
-    <div style="text-align: center; padding: 40px; color: #999;">
-      <p>No hay reservas registradas todavía.</p>
+    <div class="empty-state">
+      <p>📭 No hay reservas registradas todavía.</p>
     </div>
   {% endif %}
 </div>
 
 <style>
-  .action-link {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state p {
     font-size: 16px;
-  }
-  
-  .action-link:hover {
-    background: #f0f0f0;
-    transform: scale(1.1);
-  }
-  
-  .delete-link:hover {
-    background: #ffebee;
+    margin: 0;
   }
 </style>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import datetime, timedelta, time as dtime
+from django.core.validators import RegexValidator
+import re
 
 
 class Offering(models.Model):
@@ -14,7 +16,7 @@ class Offering(models.Model):
         verbose_name_plural = "Ofertas"
 
     def __str__(self) -> str:
-        return f"{self.name} — {self.duration_minutes}′ — €{self.price_eur}"
+        return f"{self.name} — €{self.price_eur}"
 
 
 class Reservation(models.Model):
@@ -27,7 +29,13 @@ class Reservation(models.Model):
 
     name = models.CharField("Nombre", max_length=100)
     email = models.EmailField("Email")
-    phone = models.CharField("Teléfono", max_length=20)
+    phone = models.CharField("Teléfono", max_length=20, validators=[
+        RegexValidator(
+            regex=r'^[\d\s\-\(\)\+]{7,15}$',
+            message='El teléfono debe contener entre 7 y 15 caracteres (dígitos, espacios, guiones o paréntesis)',
+            code='invalid_phone'
+        )
+    ])
     # Legacy: SERVICE_CHOICES kept for compatibility, but prefer `offering`.
     service = models.CharField("Servicio", max_length=20, choices=SERVICE_CHOICES, blank=True)
     offering = models.ForeignKey('reservas.Offering', null=True, blank=True, on_delete=models.SET_NULL, related_name='reservations')

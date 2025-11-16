@@ -351,8 +351,5 @@ class CustomLoginView(LoginView):
     template_name = 'reservas/login.html'
     
     def get_success_url(self):
-        """Redirect to admin dashboard if user is staff, otherwise to home."""
-        if self.request.user.is_staff:
-            return reverse('admin_dashboard')
         return reverse('home')
 
