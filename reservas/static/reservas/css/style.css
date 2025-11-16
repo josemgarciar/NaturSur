@@ -210,6 +210,7 @@ body{
   justify-content:center;
   color:var(--primary);
   transition:all 0.3s ease;
+  font-size:28px;
 }
 .feature:hover .feature-icon{
   background:linear-gradient(135deg, var(--primary), var(--primary-700));
@@ -220,6 +221,14 @@ body{
   width:28px;
   height:28px;
   stroke-width:2;
+}
+.feature-icon i{
+  font-size:28px;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 .feature h3{
   margin:0 0 12px;

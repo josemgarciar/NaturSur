@@ -56,6 +56,14 @@ class ReservationForm(forms.ModelForm):
             validate_phone(phone)
         return phone
 
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if date:
+            # Verificar que no sea fin de semana (5=sábado, 6=domingo)
+            if date.weekday() in [5, 6]:
+                raise ValidationError('No se pueden hacer reservas en fin de semana. Por favor, elige un día entre semana.')
+        return date
+
     def clean(self):
         cleaned = super().clean()
         offering = cleaned.get('offering')

@@ -22,36 +22,28 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6l5.2 3.2.8-1.3-4-2.4z"/>
-          </svg>
+          <i class="fas fa-hands-praying"></i>
         </div>
         <h3>Masaje y Osteopatía</h3>
         <p>A través de técnicas de masaje y osteopatía, trabajamos para liberar restricciones, mejorar la postura y restaurar la armonía de tu organismo.</p>
       </div>
       <div class="feature">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11z"/>
-          </svg>
+          <i class="fas fa-magnet"></i>
         </div>
         <h3>Par Biomagnético</h3>
         <p>El Par Biomagnético es una técnica que utiliza imanes para restaurar el balance natural del cuerpo, favoreciendo la capacidad de recuperación del organismo.</p>
       </div>
       <div class="feature">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
+          <i class="fas fa-face-smile"></i>
         </div>
         <h3>Técnicas Emocionales</h3>
         <p>Muchas tensiones musculares, bloqueos o molestias físicas tienen un origen emocional. Utilizo diversas técnicas para ayudarte a liberar esas cargas y sentirte más ligero y equilibrado.</p>
       </div>
       <div class="feature">
         <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/>
-          </svg>
+          <i class="fas fa-avocado"></i>
         </div>
         <h3>Asesoramiento Nutricional y Estilo de Vida</h3>
         <p>A través de un enfoque basado en la naturopatía, te ayudo a mejorar tu alimentación y a crear hábitos saludables que realmente funcionen para ti.</p>
@@ -141,7 +133,7 @@
         <div class="form-field">
           <label for="id_date">{{ form.date.label }}</label>
           {{ form.date }}
-          <p class="muted" style="font-size:13px;margin-top:6px;">Las fechas anteriores a hoy están deshabilitadas.</p>
+          <p class="muted" style="font-size:13px;margin-top:6px;">Las fechas anteriores a hoy y los fines de semana están deshabilitados.</p>
           {{ form.date.errors }}
         </div>
       
@@ -304,6 +296,30 @@
         if(e.target && (e.target.id === 'id_date' || e.target.id === 'id_offering')){
           // small timeout to allow server+reload flows; still safe for client-side changes
           setTimeout(toggleTime, 10);
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    // Desactivar fines de semana en el campo de fecha
+    (function(){
+      const dateEl = document.getElementById('id_date');
+      if(!dateEl) return;
+      
+      // Función para verificar si una fecha es fin de semana
+      function isWeekend(dateString){
+        const date = new Date(dateString + 'T00:00:00');
+        const day = date.getDay();
+        return day === 0 || day === 6; // 0=domingo, 6=sábado
+      }
+      
+      // Validar al cambiar la fecha
+      dateEl.addEventListener('change', function(){
+        if(isWeekend(this.value)){
+          // Mostrar alerta y limpiar el valor
+          alert('No se pueden hacer reservas en fin de semana. Por favor, elige un día entre semana.');
+          this.value = '';
         }
       });
     })();
