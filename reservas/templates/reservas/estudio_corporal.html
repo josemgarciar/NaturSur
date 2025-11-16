@@ -2,8 +2,13 @@
 {% load static %}
 
 {% block content %}
-<section class="hero">
-  <div class="container hero-inner" style="display:grid;grid-template-columns:1fr 480px;gap:36px;align-items:center;">
+{% static 'reservas/img/video-evaluacion-corporal.mp4' as bg_video %}
+<section class="hero" style="position: relative; overflow: hidden;">
+  <video autoplay muted loop disablePictureInPicture style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+    <source src="{{ bg_video }}" type="video/mp4">
+  </video>
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 0;"></div>
+  <div class="container hero-inner" style="display:grid;grid-template-columns:1fr 480px;gap:36px;align-items:center;position:relative;z-index:1;">
     <div>
       <p class="pill">CONOCE EL ESTADO DE TU BIENESTAR</p>
       <h1 style="color:var(--primary);font-size:48px;line-height:1.05;margin:6px 0 18px;">Autoevaluación corporal orientativa</h1>
@@ -11,9 +16,6 @@
       <div class="cta-row">
         <a class="btn btn-primary btn-pill" href="https://estudio.hgoweb.com/?id=FE-1546" target="_blank" rel="noopener noreferrer">COMPRUEBA TU ESTADO CORPORAL</a>
       </div>
-    </div>
-    <div>
-      <img src="{% static 'reservas/img/estudio-hero.jpg' %}" alt="Estudio corporal" style="width:100%;height:auto;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);"/>
     </div>
   </div>
 </section>

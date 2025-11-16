@@ -201,12 +201,11 @@ def estudio_corporal(request):
     return render(request, 'reservas/estudio_corporal.html')
 
 
-def mis_cinco_consejos(request):
-    """Render 'Mis cinco consejos' informational page (reused hero from attachment).
+def unete_al_equipo(request):
+    """Render 'Únete al equipo' informational page (reused hero from attachment).
     This page is internal and can be expanded later with contact form or application flow.
     """
-    return render(request, 'reservas/mis_cinco_consejos.html')
-
+    return render(request, 'reservas/unete_al_equipo.html')
 
 def available_times_api(request):
     """Return JSON list of available time strings (HH:MM) for a given offering and date.
