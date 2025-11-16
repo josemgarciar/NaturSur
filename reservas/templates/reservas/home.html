@@ -79,29 +79,38 @@
         <div class="form-field">
           <label for="id_date">{{ form.date.label }}</label>
           {{ form.date }}
+          <p class="muted" style="font-size:13px;margin-top:6px;">Las fechas anteriores a hoy están deshabilitadas.</p>
           {{ form.date.errors }}
         </div>
-        <div class="form-field">
+      
+      <div class="form-field">
           <label for="id_time">{{ form.time.label }}</label>
-          {% if available_times %}
-            <div class="available-times">
-              {% if available_times|length == 0 %}
-                <p class="muted">No hay horas disponibles para la fecha seleccionada.</p>
+          <div class="form-field">
+            {% if selected_date %}
+              {% if available_times is not none %}
+                {% if available_times|length == 0 %}
+                  <p class="muted">No hay horas disponibles para la fecha seleccionada.</p>
+                {% else %}
+                  <select name="time" id="id_time" class="form-select">
+                    <option value="">-- Elige una hora --</option>
+                    {% for t in available_times %}
+                      <option value="{{ t }}" {% if form.time.value == t %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
               {% else %}
-                <div class="times-grid">
-                  {% for t in available_times %}
-                    <label class="time-option">
-                      <input type="radio" name="time" value="{{ t }}" {% if form.time.value == t %}checked{% endif %}>
-                      <span class="time-label">{{ t }}</span>
-                    </label>
-                  {% endfor %}
-                </div>
+                <p class="muted">No se pudo calcular las horas disponibles. Intenta de nuevo.</p>
               {% endif %}
-            </div>
-          {% else %}
-            {{ form.time }}
-            {{ form.time.errors }}
-          {% endif %}
+            {% else %}
+              <select name="time" id="id_time" class="form-select" disabled>
+                <option value="">Selecciona una fecha primero</option>
+                {% for t in all_slots %}
+                  <option value="{{ t }}" disabled>{{ t }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+          {{ form.time.errors }}
         </div>
       </div>
 
@@ -134,20 +143,109 @@
   (function(){
     const dateEl = document.getElementById('id_date');
     const offeringEl = document.getElementById('id_offering');
-    function reloadIfBoth(){
+    // small inline hint element to guide user when needed
+    function ensureHintContainer(){
+      let c = document.getElementById('time-hint');
+      if(!c){
+        c = document.createElement('div');
+        c.id = 'time-hint';
+        c.style.marginTop = '6px';
+        c.style.fontSize = '13px';
+        c.style.color = 'var(--muted)';
+        const parent = document.querySelector('#reservas .form .form-field:nth-child(3)') || document.querySelector('#reservas .form .form-field');
+        // append near time field
+        const timeField = document.getElementById('id_time');
+        if(timeField && timeField.parentNode){
+          timeField.parentNode.insertBefore(c, timeField.nextSibling);
+        } else if(parent){
+          parent.appendChild(c);
+        }
+      }
+      return c;
+    }
+
+    async function fetchAndPopulate(){
       const d = dateEl ? dateEl.value : '';
       const o = offeringEl ? offeringEl.value : '';
-      if(o && d){
-        const u = new URL(window.location.href);
-        u.searchParams.set('offering', o);
-        u.searchParams.set('date', d);
-        window.location.href = u.pathname + '?' + u.searchParams.toString() + '#reservas';
+      const hint = ensureHintContainer();
+      hint.textContent = '';
+      const timeSelect = document.getElementById('id_time');
+      if(!timeSelect) return;
+      // If user selected date but no offering, ask to choose offering
+      if(d && !o){
+        hint.textContent = 'Selecciona una oferta para calcular las horas disponibles.';
+        timeSelect.innerHTML = '<option value="">Selecciona una fecha y oferta</option>';
+        timeSelect.disabled = true;
+        return;
+      }
+      if(!d || !o){
+        // reset to disabled placeholder
+        timeSelect.innerHTML = '<option value="">Selecciona una fecha primero</option>';
+        timeSelect.disabled = true;
+        return;
+      }
+
+      // Fetch available times from API
+      try{
+        const q = new URLSearchParams({offering: o, date: d});
+        const res = await fetch(`{% url 'available_times_api' %}?${q.toString()}`);
+        if(!res.ok) throw new Error('network');
+        const data = await res.json();
+        const times = data.times || [];
+        if(times.length === 0){
+          hint.textContent = 'No hay horas disponibles para la fecha seleccionada.';
+          timeSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+          timeSelect.disabled = true;
+        } else {
+          let html = '<option value="">-- Elige una hora --</option>';
+          for(const t of times){
+            html += `<option value="${t}">${t}</option>`;
+          }
+          timeSelect.innerHTML = html;
+          timeSelect.disabled = false;
+          // preserve previous selection if present
+          try{
+            const prev = '{{ form.time.value|default:"" }}';
+            if(prev){ timeSelect.value = prev; }
+          } catch(e){}
+        }
+      }catch(e){
+        hint.textContent = 'No se pudo calcular las horas disponibles. Intenta de nuevo.';
+        timeSelect.disabled = true;
       }
     }
-    if(dateEl) dateEl.addEventListener('change', reloadIfBoth);
-    if(offeringEl) offeringEl.addEventListener('change', function(){ setTimeout(reloadIfBoth, 10); });
+
+    if(dateEl) dateEl.addEventListener('change', fetchAndPopulate);
+    if(offeringEl) offeringEl.addEventListener('change', function(){ setTimeout(fetchAndPopulate, 10); });
   })();
 </script>
+
+  <script>
+    // Ensure the time select is disabled unless a date is chosen.
+    (function(){
+      function toggleTime(){
+        const dateEl = document.getElementById('id_date');
+        const timeEl = document.getElementById('id_time');
+        if(!timeEl) return;
+        const hasDate = dateEl && dateEl.value;
+        // If hasDate truthy, enable only if there are real options
+        if(hasDate){
+          // enable if there is at least one non-empty option
+          const hasOption = Array.from(timeEl.options).some(opt => opt.value && !opt.disabled);
+          timeEl.disabled = !hasOption;
+        } else {
+          timeEl.disabled = true;
+        }
+      }
+      document.addEventListener('DOMContentLoaded', toggleTime);
+      document.addEventListener('change', function(e){
+        if(e.target && (e.target.id === 'id_date' || e.target.id === 'id_offering')){
+          // small timeout to allow server+reload flows; still safe for client-side changes
+          setTimeout(toggleTime, 10);
+        }
+      });
+    })();
+  </script>
 
 <section class="social">
   <div class="container">
