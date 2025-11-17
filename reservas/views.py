@@ -306,7 +306,7 @@ def admin_dashboard(request):
 
 
 def _send_confirmation_email(reservation):
-    """Send a confirmation email for a reservation using Resend.com API."""
+    """Send a confirmation email for a reservation using Resend.com API with HTML formatting."""
     try:
         if not reservation.email:
             logger.warning('Reservation %s has no email address', reservation.id)
@@ -319,21 +319,96 @@ def _send_confirmation_email(reservation):
         duration = f"{reservation.offering.duration_minutes} minutos" if reservation.offering and reservation.offering.duration_minutes else ''
         price = f"€{reservation.offering.price_eur}" if reservation.offering and hasattr(reservation.offering, 'price_eur') else ''
         
-        message = (
+        # Plain text version
+        text_message = (
             f"Hola {reservation.name},\n\n"
             f"¡Gracias por reservar con Natursur! Aquí tienes los detalles de tu cita:\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"Servicio: {reservation.offering.name if reservation.offering else 'No especificado'}\n"
             f"Fecha: {date_str}\n"
             f"Hora: {time_str}\n"
             f"Duración: {duration}\n"
-            f"Precio: {price}\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"Teléfono de contacto: {reservation.phone if reservation.phone else 'No proporcionado'}\n\n"
-            f"Si necesitas cambiar o cancelar tu reserva, no dudes en contactarnos respondiendo a este email.\n\n"
+            f"Precio: {price}\n\n"
+            f"Teléfono: {reservation.phone if reservation.phone else 'No proporcionado'}\n\n"
+            f"Si necesitas cambiar o cancelar tu reserva, no dudes en contactarnos.\n\n"
             f"¡Te esperamos!\n"
             f"Natursur"
         )
+        
+        # HTML version with styling
+        html_message = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 28px; }}
+                .content {{ background: #f9f9f9; padding: 30px; border: 1px solid #ddd; }}
+                .details {{ background: white; padding: 20px; border-radius: 6px; margin: 20px 0; }}
+                .detail-row {{ display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }}
+                .detail-row:last-child {{ border-bottom: none; }}
+                .detail-label {{ font-weight: 600; color: #2d5016; }}
+                .detail-value {{ color: #666; }}
+                .price-highlight {{ background: #2d5016; color: white; padding: 15px; border-radius: 6px; font-size: 24px; font-weight: bold; text-align: center; margin: 15px 0; }}
+                .footer {{ background: #2d5016; color: white; padding: 20px; border-radius: 0 0 8px 8px; text-align: center; font-size: 12px; }}
+                .cta {{ background: #4a7c2c; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; display: inline-block; margin-top: 15px; }}
+                .warning {{ background: #fff3cd; color: #856404; padding: 12px; border-radius: 4px; margin-top: 20px; font-size: 13px; border-left: 4px solid #ffc107; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>✓ Reserva Confirmada</h1>
+                    <p style="margin: 10px 0 0 0;">Tu cita en Natursur</p>
+                </div>
+                
+                <div class="content">
+                    <p style="font-size: 16px; margin-top: 0;">Hola <strong>{reservation.name}</strong>,</p>
+                    
+                    <p>¡Gracias por reservar con Natursur! Tu reserva ha sido confirmada. Aquí tienes los detalles de tu cita:</p>
+                    
+                    <div class="details">
+                        <div class="detail-row">
+                            <span class="detail-label">📋 Servicio:</span>
+                            <span class="detail-value">{reservation.offering.name if reservation.offering else 'No especificado'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📅 Fecha:</span>
+                            <span class="detail-value">{date_str}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">🕐 Hora:</span>
+                            <span class="detail-value">{time_str}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">⏱️ Duración:</span>
+                            <span class="detail-value">{duration}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">☎️ Contacto:</span>
+                            <span class="detail-value">{reservation.phone if reservation.phone else 'No proporcionado'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="price-highlight">{price}</div>
+                    
+                    <p style="color: #666; font-size: 14px;">Si necesitas cambiar o cancelar tu reserva, no dudes en contactarnos respondiendo a este email o llamándonos.</p>
+                    
+                    <div class="warning">
+                        <strong>💡 Recordatorio:</strong> Por favor, intenta llegar 5-10 minutos antes de tu cita.
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <p style="margin: 0; font-weight: bold; margin-bottom: 8px;">Natursur</p>
+                    <p style="margin: 0;">Cuidado, nutrición y experiencias relajantes con esencia del Sur</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
         
         from_email = settings.DEFAULT_FROM_EMAIL
         
@@ -342,13 +417,14 @@ def _send_confirmation_email(reservation):
             try:
                 import resend
                 resend.api_key = settings.RESEND_API_KEY
-                logger.info('📧 Attempting to send email via Resend to %s from %s', reservation.email, from_email)
+                logger.info('📧 Attempting to send HTML email via Resend to %s from %s', reservation.email, from_email)
                 
                 response = resend.Emails.send({
                     "from": from_email,
                     "to": reservation.email,
                     "subject": subject,
-                    "text": message,
+                    "html": html_message,
+                    "text": text_message,
                 })
                 
                 logger.info('📧 Resend response: %s', response)
