@@ -306,7 +306,7 @@ def admin_dashboard(request):
 
 
 def _send_confirmation_email(reservation):
-    """Send a confirmation email for a reservation."""
+    """Send a confirmation email for a reservation using Resend.com API."""
     try:
         if not reservation.email:
             logger.warning('Reservation %s has no email address', reservation.id)
@@ -335,18 +335,38 @@ def _send_confirmation_email(reservation):
             f"Natursur"
         )
         
-        # Send email
         from_email = settings.DEFAULT_FROM_EMAIL
-        send_mail(
-            subject,
-            message,
-            from_email,
-            [reservation.email],
-            fail_silently=False,
-        )
-        logger.info('Confirmation email sent to %s for reservation %s', reservation.email, reservation.id)
+        
+        # Always try Resend API if key is available
+        if settings.RESEND_API_KEY:
+            try:
+                import resend
+                resend.api_key = settings.RESEND_API_KEY
+                logger.info('📧 Attempting to send email via Resend to %s from %s', reservation.email, from_email)
+                
+                response = resend.Emails.send({
+                    "from": from_email,
+                    "to": reservation.email,
+                    "subject": subject,
+                    "text": message,
+                })
+                
+                logger.info('📧 Resend response: %s', response)
+                
+                if isinstance(response, dict) and response.get('id'):
+                    logger.info('✅ Confirmation email sent via Resend (ID: %s) to %s', response.get('id'), reservation.email)
+                elif hasattr(response, 'id'):
+                    logger.info('✅ Confirmation email sent via Resend (ID: %s) to %s', response.id, reservation.email)
+                else:
+                    logger.warning('⚠️ Resend response unexpected format: %s', response)
+                return
+            except Exception as resend_error:
+                logger.error('❌ Failed to send email via Resend: %s. Error type: %s', str(resend_error), type(resend_error).__name__)
+                # In DEBUG mode, still print to console; in production, this is the error we need to investigate
+                if not settings.DEBUG:
+                    raise  # Re-raise to stop execution in production
     except Exception as e:
-        logger.exception('Failed to send confirmation email for reservation %s: %s', getattr(reservation, 'id', 'unknown'), str(e))
+        logger.exception('❌ Failed to send confirmation email for reservation %s: %s', getattr(reservation, 'id', 'unknown'), str(e))
 
 
 def logout_view(request):

@@ -9,9 +9,9 @@ load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = 'django-insecure-replace-this-for-prod'
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -102,16 +102,14 @@ YOUTUBE_CHANNEL_ID = 'UCryL5eZosDAQ4fDHuXK8pvw'
 INSTAGRAM_USERNAME = os.getenv('INSTAGRAM_USERNAME', 'yosoyescalona')
 
 # Email configuration for reservation confirmations
-# For local development, use console backend to print emails to console
-# For production, use SMTP backend with proper credentials stored in environment variables
+# Using Resend.com API for reliable email delivery
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'josgarros@alum.us.es')
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    # Production: use Resend API via environment variable
+    # RESEND_API_KEY should be set in .env file
+    pass
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@natursur.local')
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', None)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'josgarros@alum.us.es')
