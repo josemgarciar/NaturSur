@@ -20,6 +20,10 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
+from django.core.mail import send_mail
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _fetch_youtube_videos(channel_id: str, limit: int = 6):
@@ -187,7 +191,9 @@ def reservar(request):
 
     form = ReservationForm(request.POST)
     if form.is_valid():
-        form.save()
+        reservation = form.save()
+        # Send confirmation email
+        _send_confirmation_email(reservation)
         return redirect('reserva_exito')
 
     return render(request, 'reservas/home.html', {'form': form})
@@ -297,6 +303,50 @@ def admin_dashboard(request):
         'clients_count': clients_count,
     }
     return render(request, 'reservas/admin_dashboard.html', context)
+
+
+def _send_confirmation_email(reservation):
+    """Send a confirmation email for a reservation."""
+    try:
+        if not reservation.email:
+            logger.warning('Reservation %s has no email address', reservation.id)
+            return
+        
+        # Build email content
+        subject = f"Confirmación de reserva - {reservation.offering.name if reservation.offering else 'Natursur'}"
+        date_str = reservation.date.strftime('%d/%m/%Y') if reservation.date else ''
+        time_str = reservation.time.strftime('%H:%M') if reservation.time else ''
+        duration = f"{reservation.offering.duration_minutes} minutos" if reservation.offering and reservation.offering.duration_minutes else ''
+        price = f"€{reservation.offering.price_eur}" if reservation.offering and hasattr(reservation.offering, 'price_eur') else ''
+        
+        message = (
+            f"Hola {reservation.name},\n\n"
+            f"¡Gracias por reservar con Natursur! Aquí tienes los detalles de tu cita:\n\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"Servicio: {reservation.offering.name if reservation.offering else 'No especificado'}\n"
+            f"Fecha: {date_str}\n"
+            f"Hora: {time_str}\n"
+            f"Duración: {duration}\n"
+            f"Precio: {price}\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"Teléfono de contacto: {reservation.phone if reservation.phone else 'No proporcionado'}\n\n"
+            f"Si necesitas cambiar o cancelar tu reserva, no dudes en contactarnos respondiendo a este email.\n\n"
+            f"¡Te esperamos!\n"
+            f"Natursur"
+        )
+        
+        # Send email
+        from_email = settings.DEFAULT_FROM_EMAIL
+        send_mail(
+            subject,
+            message,
+            from_email,
+            [reservation.email],
+            fail_silently=False,
+        )
+        logger.info('Confirmation email sent to %s for reservation %s', reservation.email, reservation.id)
+    except Exception as e:
+        logger.exception('Failed to send confirmation email for reservation %s: %s', getattr(reservation, 'id', 'unknown'), str(e))
 
 
 def logout_view(request):

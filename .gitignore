@@ -1,10 +1,46 @@
-natursur/__pycache__/*
-reservas/__pycache__/*
-reservas/migrations/__pycache__/*
-.env.local
-*.pyc
+# Python cache and compiled files
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Django cache
+*.cache
+.cache/
+
+# Virtual environments
 .venv/
 venv/
+env/
+ENV/
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+Thumbs.db
+
+# Database
 db.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
