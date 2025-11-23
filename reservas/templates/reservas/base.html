@@ -30,6 +30,8 @@
           <!-- 'Mis cinco consejos' points to internal info page -->
           <a class="nav-item" href="{% url 'unete_al_equipo' %}">Únete al equipo</a>
           <a class="nav-item" href="{% url 'estudio_corporal' %}">Estudio corporal</a>
+          <a class="nav-item" href="{% url 'faq' %}">Preguntas Frecuentes</a>
+          <a class="nav-item" href="{% url 'contacto' %}">Contacto</a>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
               <a class="nav-item" href="{% url 'admin_dashboard' %}">🔧 Panel Admin</a>

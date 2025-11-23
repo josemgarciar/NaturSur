@@ -1,0 +1,306 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero" style="padding:48px 0 28px;border-bottom:1px solid var(--border);background:linear-gradient(135deg, rgba(26,163,107,0.15), rgba(26,163,107,0.08))">
+  <div class="container">
+    <h1 style="font-size:40px;margin:0 0 12px;color:var(--primary)">Preguntas Frecuentes</h1>
+    <p class="lead" style="color:var(--muted);max-width:60ch">Encuentra respuestas a las preguntas más comunes sobre nuestros servicios, citas y políticas.</p>
+  </div>
+</section>
+
+<section class="faq-page" style="padding: 30px;">
+  <div class="container">
+    <div class="faq-container">
+      <!-- FAQ Item 1 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Cuál es la diferencia entre osteopatía y masaje bioenergético?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>La osteopatía trabaja a nivel estructural y postural para corregir desajustes del cuerpo, mientras que el masaje bioenergético se enfoca en aliviar tensiones musculares y mejorar la circulación.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 2 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿El Par Biomagnético es una técnica médica?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>No, el Par Biomagnético es una técnica complementaria que ayuda a equilibrar la energía del cuerpo, pero no sustituye un tratamiento médico profesional.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 3 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Qué beneficios tiene el Código de la Emoción?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>Esta técnica ayuda a liberar bloqueos emocionales que pueden estar afectando tu bienestar físico y mental. Se basa en la identificación y liberación de emociones atrapadas.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 4 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿El asesoramiento nutricional incluye planes de dieta?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>No trabajo con dietas estrictas, sino con recomendaciones personalizadas basadas en naturopatía y hábitos saludables.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 5 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Cómo puedo reservar una sesión?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>Puedes reservar una sesión de varias formas:</p>
+          <ul>
+            <li>Dirígete a la sección "Reserva tu experiencia" en la página de inicio</li>
+            <li>Selecciona el servicio que deseas y elige una fecha y hora disponibles</li>
+            <li>Rellena tus datos de contacto y confirma tu reserva</li>
+            <li>Recibirás un email de confirmación con los detalles de tu cita</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- FAQ Item 6 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Puedo cancelar o modificar mi reserva?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>Sí, puedes cancelar o modificar tu reserva. Te recomendamos hacerlo con al menos 24 horas de antelación. Puedes:</p>
+          <ul>
+            <li>Contactarnos a través del formulario de contacto</li>
+            <li>Enviarnos un mensaje por WhatsApp</li>
+            <li>Responder al email de confirmación de tu reserva</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- FAQ Item 7 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Cuáles son los horarios de atención?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>Nuestros horarios de atención dependen del día y la disponibilidad. Puedes ver todos los horarios disponibles cuando hagas una reserva en la plataforma. Para consultas específicas sobre horarios, contacta con nosotros directamente.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 8 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Cuál es tu política de pagos?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>El pago se realiza en el momento de la cita. Aceptamos efectivo y otros métodos de pago.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 9 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Qué debo llevar a mi primera sesión?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>Para tu primera sesión te recomendamos:</p>
+          <ul>
+            <li>Llega 5-10 minutos antes de tu cita</li>
+            <li>Viste ropa cómoda que puedas quitarte fácilmente</li>
+            <li>Lleva tu documento de identidad</li>
+          </ul>
+          <p>Si tienes alguna lesión, alergia o condición especial, avísanos con anticipación.</p>
+        </div>
+      </details>
+
+      <!-- FAQ Item 10 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-question-text">¿Necesito tener experiencia previa para acceder a vuestros servicios?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </summary>
+        <div class="faq-answer">
+          <p>No, todos nuestros servicios son para personas de cualquier nivel de experiencia. Si es tu primera vez, nos aseguraremos de explicar todo el proceso y adaptaremos el tratamiento a tus necesidades.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="faq-cta">
+      <h2>¿No encontraste lo que buscabas?</h2>
+      <p>Si tienes más preguntas o necesitas ayuda, no dudes en contactarnos directamente.</p>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+        <a href="{% url 'contacto' %}" class="btn btn-primary btn-pill">
+          <i class="fas fa-envelope"></i> Formulario de contacto
+        </a>
+        <a href="https://wa.me/34691355682" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('toggle', function() {
+      if (this.open) {
+        // Si se abre esta caja, cerrar todas las demás
+        document.querySelectorAll('.faq-item').forEach(otherItem => {
+          if (otherItem !== this && otherItem.open) {
+            otherItem.open = false;
+          }
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .faq-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(26, 163, 107, 0.1);
+  }
+
+  .faq-summary {
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 16px;
+    user-select: none;
+    transition: all 0.3s ease;
+  }
+
+  .faq-summary:hover {
+    background: var(--ghost-hover-bg);
+  }
+
+  .faq-question-text {
+    flex: 1;
+    text-align: left;
+  }
+
+  .faq-icon {
+    font-size: 14px;
+    margin-left: 12px;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-summary {
+    background: linear-gradient(135deg, rgba(26, 163, 107, 0.05), rgba(26, 163, 107, 0.02));
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 20px;
+    color: var(--muted);
+    line-height: 1.6;
+    background: linear-gradient(135deg, rgba(26, 163, 107, 0.03), rgba(26, 163, 107, 0.01));
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .faq-item[open] .faq-answer {
+    animation: expandBox 2.0s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    padding: 20px 20px;
+  }
+
+  .faq-item:not([open]) .faq-answer {
+    animation: collapseBox 2.0s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes expandBox {
+    0% {
+      opacity: 0;
+      max-height: 0;
+      padding: 0 20px;
+    }
+    60% {
+      opacity: 1;
+      max-height: 500px;
+      padding: 20px 20px;
+    }
+    100% {
+      opacity: 1;
+      max-height: 1000px;
+      padding: 20px 20px;
+    }
+  }
+
+  @keyframes collapseBox {
+    0% {
+      opacity: 1;
+      max-height: 1000px;
+      padding: 20px 20px;
+    }
+    40% {
+      opacity: 0;
+      max-height: 500px;
+      padding: 20px 20px;
+    }
+    100% {
+      opacity: 0;
+      max-height: 0;
+      padding: 0 20px;
+    }
+  }
+
+  .faq-answer p {
+    margin: 0 0 12px 0;
+  }
+
+  .faq-answer p:first-child {
+    margin-top: 0;
+  }
+
+  .faq-answer ul {
+    margin: 12px 0;
+    padding-left: 20px;
+    list-style-position: inside;
+  }
+
+  .faq-answer ul li {
+    margin: 8px 0;
+  }
+
+  .faq-answer strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+</style>
+{% endblock %}

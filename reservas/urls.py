@@ -7,7 +7,8 @@ urlpatterns = [
     path('reserva-exito/', views.reserva_exito, name='reserva_exito'),
     path('tienda/', views.tienda, name='tienda'),
     path('estudio-corporal/', views.estudio_corporal, name='estudio_corporal'),
-
+    path('contacto/', views.contacto, name='contacto'),
+    path('faq/', views.faq, name='faq'),
     path('unete-al-equipo/', views.unete_al_equipo, name='unete_al_equipo'),
     # API for async available times
     path('api/available-times/', views.available_times_api, name='available_times_api'),

@@ -16,7 +16,6 @@
           <th>Teléfono</th>
           <th>Oferta</th>
           <th>Servicio</th>
-          <th>Notas</th>
           <th>Creada</th>
           <th>Acciones</th>
         </tr>
@@ -43,12 +42,18 @@
               —
             {% endif %}
           </td>
-          <td>{{ r.notes|truncatewords:5 }}</td>
           <td>{{ r.created_at|date:"d/m/Y H:i" }}</td>
           <td>
-            <a href="{% url 'delete_reservation' r.id %}" class="action-link delete-link" title="Eliminar reserva">
-              🗑️
-            </a>
+            <div class="action-buttons">
+              {% if r.notes %}
+                <button class="action-link info-link" title="Ver notas" onclick="showNotes('{{ r.id }}', '{{ r.notes|escapejs }}')">
+                  📝
+                </button>
+              {% endif %}
+              <a href="{% url 'delete_reservation' r.id %}" class="action-link delete-link" title="Eliminar reserva">
+                🗑️
+              </a>
+            </div>
           </td>
         </tr>
         {% endfor %}
@@ -61,6 +66,40 @@
   {% endif %}
 </div>
 
+<!-- Modal para notas -->
+<div id="notesModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>📝 Notas de la Reserva</h3>
+      <button class="modal-close" onclick="closeNotes()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="notesText"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeNotes()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showNotes(reservationId, notes) {
+    document.getElementById('notesText').textContent = notes;
+    document.getElementById('notesModal').style.display = 'flex';
+  }
+
+  function closeNotes() {
+    document.getElementById('notesModal').style.display = 'none';
+  }
+
+  // Cerrar modal al hacer clic fuera
+  document.getElementById('notesModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeNotes();
+    }
+  });
+</script>
+
 <style>
   .empty-state {
     text-align: center;
@@ -71,6 +110,109 @@
   .empty-state p {
     font-size: 16px;
     margin: 0;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .info-link {
+    cursor: pointer;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+
+  .info-link:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover {
+    color: var(--text);
+  }
+
+  .modal-body {
+    padding: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .modal-body p {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
   }
 </style>
 {% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'reservas/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero" style="padding:48px 0 28px;border-bottom:1px solid var(--border);background:linear-gradient(135deg, rgba(26,163,107,0.15), rgba(26,163,107,0.08))">
+  <div class="container">
+    <h1 style="font-size:40px;margin:0 0 12px;color:var(--primary)">Ponte en contacto</h1>
+    <p class="lead" style="color:var(--muted);max-width:60ch">¿Tienes preguntas o necesitas más información? Estamos aquí para ayudarte. Contáctanos a través de WhatsApp o visítanos en nuestra ubicación.</p>
+  </div>
+</section>
+
+<section class="contact-page">
+  <div class="container">
+    <div class="contact-grid-large">
+      <!-- WhatsApp Contact Card -->
+      <div class="contact-card-large" style="padding: 50px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:flex-start;margin-bottom:16px">
+          <div class="contact-icon-large" style="margin:0">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+          <h2 style="margin:0; padding: 10px;">Contacto por WhatsApp</h2>
+        </div>
+        <p class="contact-number">+34 691 355 682</p>
+        <p class="contact-description">Envíanos un mensaje por WhatsApp y te responderemos lo antes posible.</p>
+        <a href="https://wa.me/34691355682" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill">
+          <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+        </a>
+      </div>
+
+      <!-- Google Maps Card -->
+      <div class="contact-card-large">
+        <div class="map-container-large" style="padding: 20px;">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.0123456789!2d-5.8333!3d37.3667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd126c5c5c5c5c5c5%3A0x1234567890abcdef!2sAv.%20Santa%20Luc%C3%ADa%2C%2062%2C%2041500%20Alcal%C3%A1%20de%20Guada%C3%ADra%2C%20Sevilla!5e0!3m2!1ses!2ses!4v1700000000000"
+            width="100%"
+            height="400"
+            style="border:0;border-radius:12px;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <h2>Nuestra ubicación</h2>
+        <p class="contact-address">
+          Av. Santa Lucía, 62<br>
+          41500 Alcalá de Guadaíra<br>
+          <strong>Sevilla, España</strong>
+        </p>
+        <a href="https://maps.app.goo.gl/9sU1z8JipVpWKLcy8" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+          <i class="fas fa-map-marker-alt"></i> Ver en Google Maps
+        </a>
+      </div>
+
+      <!-- Contact Form Card -->
+      <div class="contact-card-large">
+        <h2>Formulario de contacto</h2>
+        <p class="contact-description">Cuéntanos tu consulta y nos pondremos en contacto contigo lo antes posible.</p>
+        
+        <form class="contact-form" method="post" action="{% url 'contacto' %}">
+          {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="form-field">
+            <label for="id_name">Nombre</label>
+            <input type="text" id="id_name" name="name" required placeholder="Tu nombre completo" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label for="id_email">Email</label>
+            <input type="email" id="id_email" name="email" required placeholder="tu@email.com" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label for="id_phone">Teléfono</label>
+            <input type="tel" id="id_phone" name="phone" placeholder="+34 XXX XX XX XX" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label for="id_subject">Asunto</label>
+            <input type="text" id="id_subject" name="subject" required placeholder="¿Sobre qué es tu consulta?" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label for="id_message">Mensaje</label>
+            <textarea id="id_message" name="message" required placeholder="Cuéntanos más sobre tu consulta..." class="form-textarea" rows="6"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+        </form>
+
+        {% if success_message %}
+          <div class="alert alert-success" style="margin-top: 16px;">
+            <strong>✓ Mensaje enviado correctamente</strong>
+            <p>Nos pondremos en contacto contigo pronto.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

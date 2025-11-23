@@ -499,3 +499,166 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse('home')
 
+
+def contacto(request):
+    """Contact page with WhatsApp link, Google Maps embed, and contact form."""
+    context = {}
+    
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+        
+        # Validate form
+        if not all([name, email, subject, message]):
+            messages.error(request, 'Por favor completa todos los campos obligatorios.')
+            return redirect('contacto')
+        
+        # Send email to site admin
+        try:
+            admin_email = settings.DEFAULT_FROM_EMAIL or 'admin@natursur.com'
+            from_email = settings.DEFAULT_FROM_EMAIL
+            
+            # Build email content
+            html_message = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }}
+                    .header h1 {{ margin: 0; font-size: 28px; }}
+                    .content {{ background: #f9f9f9; padding: 30px; border: 1px solid #ddd; }}
+                    .details {{ background: white; padding: 20px; border-radius: 6px; margin: 20px 0; }}
+                    .detail-row {{ display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }}
+                    .detail-row:last-child {{ border-bottom: none; }}
+                    .detail-label {{ font-weight: 600; color: #2d5016; }}
+                    .detail-value {{ color: #666; word-break: break-word; }}
+                    .message-box {{ background: #f0f0f0; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #4a7c2c; }}
+                    .footer {{ background: #2d5016; color: white; padding: 20px; border-radius: 0 0 8px 8px; text-align: center; font-size: 12px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📬 Nuevo Mensaje de Contacto</h1>
+                    </div>
+                    
+                    <div class="content">
+                        <p><strong>Asunto:</strong> {subject}</p>
+                        
+                        <div class="details">
+                            <div class="detail-row">
+                                <span class="detail-label">👤 Nombre:</span>
+                                <span class="detail-value">{name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📧 Email:</span>
+                                <span class="detail-value"><a href="mailto:{email}">{email}</a></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">☎️ Teléfono:</span>
+                                <span class="detail-value">{phone if phone else 'No proporcionado'}</span>
+                            </div>
+                        </div>
+                        
+                        <p><strong>Mensaje:</strong></p>
+                        <div class="message-box">
+                            {message.replace(chr(10), '<br>')}
+                        </div>
+                        
+                        <p style="color: #666; font-size: 13px; margin-top: 20px;">
+                            <strong>Responde a este email para contactar directamente con {name}.</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="footer">
+                        <p style="margin: 0;">Natursur - Panel de Contacto</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            text_message = f"""
+Nuevo mensaje de contacto
+
+Asunto: {subject}
+Nombre: {name}
+Email: {email}
+Teléfono: {phone if phone else 'No proporcionado'}
+
+Mensaje:
+{message}
+
+Responde a este email para contactar directamente con {name}.
+            """
+            
+            # Send via Resend API if available
+            if settings.RESEND_API_KEY:
+                try:
+                    import resend
+                    resend.api_key = settings.RESEND_API_KEY
+                    logger.info('📧 Sending contact form email via Resend from %s to %s', from_email, admin_email)
+                    
+                    response = resend.Emails.send({
+                        "from": from_email,
+                        "to": admin_email,
+                        "reply_to": email,  # Allow admin to reply directly to the user
+                        "subject": f'[CONTACTO] {subject} - De: {name}',
+                        "html": html_message,
+                        "text": text_message,
+                    })
+                    
+                    logger.info('📧 Resend response: %s', response)
+                    
+                    if isinstance(response, dict) and response.get('id'):
+                        logger.info('✅ Contact form email sent via Resend (ID: %s) to %s', response.get('id'), admin_email)
+                    elif hasattr(response, 'id'):
+                        logger.info('✅ Contact form email sent via Resend (ID: %s) to %s', response.id, admin_email)
+                    
+                    context['success_message'] = True
+                    messages.success(request, 'Mensaje enviado correctamente. Te responderemos pronto.')
+                    return render(request, 'reservas/contacto.html', context)
+                except Exception as resend_error:
+                    logger.error('❌ Failed to send contact email via Resend: %s', str(resend_error))
+                    if settings.DEBUG:
+                        messages.warning(request, f'Aviso: {str(resend_error)}')
+                    else:
+                        messages.error(request, 'Error al enviar el mensaje. Por favor, intenta de nuevo.')
+                        return redirect('contacto')
+            else:
+                # Fallback to Django's send_mail if Resend is not configured
+                try:
+                    send_mail(
+                        subject=f'[CONTACTO] {subject} - De: {name}',
+                        message=text_message,
+                        from_email=from_email,
+                        recipient_list=[admin_email],
+                        html_message=html_message,
+                        fail_silently=False,
+                    )
+                    context['success_message'] = True
+                    messages.success(request, 'Mensaje enviado correctamente. Te responderemos pronto.')
+                    logger.info('✅ Contact form email sent via Django mail to %s', admin_email)
+                except Exception as e:
+                    logger.error('❌ Error sending contact email: %s', str(e))
+                    messages.error(request, 'Error al enviar el mensaje. Intenta de nuevo más tarde.')
+                    return redirect('contacto')
+        
+        except Exception as e:
+            logger.exception('❌ Unexpected error in contact form: %s', str(e))
+            messages.error(request, 'Error inesperado. Por favor, intenta de nuevo.')
+            return redirect('contacto')
+    
+    return render(request, 'reservas/contacto.html', context)
+
+
+def faq(request):
+    """FAQ page with collapsible questions and answers."""
+    return render(request, 'reservas/faq.html')
+
