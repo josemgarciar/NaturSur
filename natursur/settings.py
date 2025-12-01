@@ -18,6 +18,13 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Limpiar espacios en blanco
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS]
 
+# En producción, permitir el dominio de Render
+if not DEBUG:
+    ALLOWED_HOSTS.extend([
+        '*.onrender.com',
+        'natursur-avey.onrender.com',
+    ])
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
