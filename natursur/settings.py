@@ -15,6 +15,8 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # ALLOWED_HOSTS: permitir render.com y localhost
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# Limpiar espacios en blanco
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
