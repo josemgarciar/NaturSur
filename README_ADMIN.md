@@ -115,8 +115,3 @@ Contraseña: admin123
    python manage.py create_admin --username nuevo_admin --email email@natursur.com --password contraseña
    ```
 
----
-
-**Estado:** ✅ IMPLEMENTADO Y FUNCIONAL  
-**Fecha:** 16 de noviembre de 2025  
-**Autor:** GitHub Copilot

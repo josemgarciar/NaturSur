@@ -17,6 +17,16 @@ fi
 echo "[*] Applying migrations..."
 python3 manage.py migrate
 
+# Credenciales para el superusuario (export as env so the helper script can read them)
+USERNAME="admin"
+PASSWORD="adminpass"
+EMAIL="admin@example.com"
+export ADMINUSER="$USERNAME" ADMINPASS="$PASSWORD" ADMINEMAIL="$EMAIL"
+
+echo "[*] Ensuring superuser exists ($USERNAME)..."
+# Call the dedicated helper script instead of an inline -c snippet
+python3 "$ROOT_DIR/scripts/ensure_superuser.py"
+
 echo "[*] Seeding offerings..."
 # Run the seeder under manage.py shell so project root is on sys.path
 python3 manage.py shell < scripts/seed_offerings.py

@@ -18,6 +18,15 @@ if exist "%ROOT_DIR%\.venv\Scripts\activate.bat" (
 echo [*] Applying migrations...
 python manage.py migrate
 
+REM Credenciales para el superusuario (exported in-process)
+set "ADMINUSER=admin"
+set "ADMINPASS=adminpass"
+set "ADMINEMAIL=admin@example.com"
+
+echo [*] Ensuring superuser exists (%ADMINUSER%)...
+REM Call the helper script instead of a fragile inline -c command
+python "%ROOT_DIR%\scripts\ensure_superuser.py"
+
 echo [*] Seeding offerings...
 REM Run the seeder under manage.py shell so project root is on sys.path
 python manage.py shell < scripts\seed_offerings.py

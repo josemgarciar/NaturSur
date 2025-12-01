@@ -30,6 +30,23 @@ python manage.py createsuperuser
 # 4) Arrancar el servidor
 python manage.py runserver
 ```
+En bash o zsh
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+
+scripts/start_dev.sh
+```
+o windows
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+
+scripts/start_dev.bat
+```
+
 
 Visita http://127.0.0.1:8000 para ver la web.
 
