@@ -124,7 +124,7 @@ if not DEBUG:
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    # Resend API en producción
+    # Resend API en producción (v2.x)
     pass
 
 RESEND_API_KEY = os.getenv('RESEND_API_KEY', None)

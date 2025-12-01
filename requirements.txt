@@ -1,7 +1,7 @@
 Django==4.2.10
 gunicorn==21.2.0
 python-dotenv==1.0.1
-resend==0.10.0
+resend==2.19.0
 Pillow==11.0.0
 whitenoise==6.7.0
 psycopg2-binary==2.9.10
