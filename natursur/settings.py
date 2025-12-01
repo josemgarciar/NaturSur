@@ -92,6 +92,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_USE_FINDERS = True
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # After login redirect to home by default
