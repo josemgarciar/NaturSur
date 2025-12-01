@@ -21,7 +21,11 @@ ENV/
 # Environment variables
 .env
 .env.local
-.env*.local
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
 
 # IDE and OS
 .vscode/

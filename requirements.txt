@@ -1,3 +1,5 @@
-Django>=4.2,<5.1
-python-dotenv>=1.0.0
-resend>=2.0.0
+Django==4.2.0
+gunicorn==21.2.0
+python-dotenv==1.0.0
+resend==0.3.0
+Pillow==10.0.0

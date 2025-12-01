@@ -7,10 +7,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Cargar variables de entorno desde .env
 load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = 'django-insecure-replace-this-for-prod'
+# En producción, usar variable de entorno; en desarrollo, usar valor por defecto
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-replace-this-for-prod')
 
+# DEBUG basado en variable de entorno (por defecto True en desarrollo)
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
+# ALLOWED_HOSTS: permitir render.com y localhost
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
@@ -25,6 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,7 +88,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# Static files configuration para Render
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -101,15 +107,22 @@ YOUTUBE_CHANNEL_ID = 'UCryL5eZosDAQ4fDHuXK8pvw'
 # Username de Instagram para scrapear posts públicos (usando instagrapi)
 INSTAGRAM_USERNAME = os.getenv('INSTAGRAM_USERNAME', 'yosoyescalona')
 
-# Email configuration for reservation confirmations
-# Using Resend.com API for reliable email delivery
+# Security settings para producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_SECURITY_POLICY = {
+        'default-src': ("'self'",),
+    }
+
+# Email configuration
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'josgarros@alum.us.es')
 else:
-    # Production: use Resend API via environment variable
-    # RESEND_API_KEY should be set in .env file
+    # Resend API en producción
     pass
 
 RESEND_API_KEY = os.getenv('RESEND_API_KEY', None)
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'josgarros@alum.us.es')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@natursur.com')
